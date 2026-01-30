@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Create New Product') }}
+            {{ __('Edit Product') }}
         </h2>
     </x-slot>
 
@@ -9,10 +9,10 @@
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('admin.products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
+                        @method('PUT')
 
-                        <!-- Title -->
                         <div class="mb-6">
                             <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Product Title <span class="text-red-500">*</span>
@@ -20,7 +20,7 @@
                             <input type="text" 
                                    id="title" 
                                    name="title" 
-                                   value="{{ old('title') }}"
+                                   value="{{ old('title', $product->title) }}"
                                    class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600"
                                    required>
                             @error('title')
@@ -28,7 +28,7 @@
                             @enderror
                         </div>
 
-                        <!-- Category -->
+                      
                         <div class="mb-6">
                             <label for="category_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Category <span class="text-red-500">*</span>
@@ -39,7 +39,7 @@
                                     required>
                                 <option value="">Select a category</option>
                                 @foreach($categories as $category)
-                                <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                                <option value="{{ $category->id }}" {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
                                     {{ $category->title }}
                                 </option>
                                 @endforeach
@@ -49,7 +49,7 @@
                             @enderror
                         </div>
 
-                        <!-- Price -->
+                       
                         <div class="mb-6">
                             <label for="price" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Price ($) <span class="text-red-500">*</span>
@@ -57,7 +57,7 @@
                             <input type="number" 
                                    id="price" 
                                    name="price" 
-                                   value="{{ old('price') }}"
+                                   value="{{ old('price', $product->price) }}"
                                    step="0.01"
                                    min="0"
                                    class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600"
@@ -67,7 +67,7 @@
                             @enderror
                         </div>
 
-                        <!-- Description -->
+                       
                         <div class="mb-6">
                             <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Description
@@ -75,16 +75,30 @@
                             <textarea id="description" 
                                       name="description" 
                                       rows="4"
-                                      class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">{{ old('description') }}</textarea>
+                                      class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">{{ old('description', $product->description) }}</textarea>
                             @error('description')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <!-- Image Upload -->
+                      
+                        @if($product->image)
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Current Image
+                            </label>
+                            <div class="w-48 h-48 bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
+                                <img src="{{ asset('storage/' . $product->image) }}" 
+                                     alt="{{ $product->title }}"
+                                     class="w-full h-full object-cover">
+                            </div>
+                        </div>
+                        @endif
+
+                      
                         <div class="mb-6">
                             <label for="image" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Product Image
+                                {{ $product->image ? 'Change Image' : 'Product Image' }}
                             </label>
                             <input type="file" 
                                    id="image" 
@@ -100,17 +114,20 @@
                                           dark:hover:file:bg-gray-600">
                             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
                                 Accepted formats: JPG, PNG, GIF, WebP (Max: 2MB)
+                                @if($product->image)
+                                <br>Leave empty to keep current image
+                                @endif
                             </p>
                             @error('image')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <!-- Action Buttons -->
+                     
                         <div class="flex items-center gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                             <button type="submit" 
                                     class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                                Create Product
+                                Update Product
                             </button>
 
                             <a href="{{ route('products.index') }}" 

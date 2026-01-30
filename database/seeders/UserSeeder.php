@@ -13,7 +13,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create specific users
+ 
         User::create([
             'name' => 'Admin User',
             'email' => 'admin@tifawinsouk.com',
@@ -50,7 +50,7 @@ class UserSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        // Create random users using factory
+    
         User::factory(20)->create();
     }
 }

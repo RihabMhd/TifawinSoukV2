@@ -11,7 +11,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Run seeders in the correct order to respect foreign key constraints
         $this->call([
             RoleSeeder::class,
             UserSeeder::class,
