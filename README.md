@@ -237,5 +237,6 @@ Souhaitez-vous maintenant :
 - 🧪 des **Seeders Laravel**
 - 🗃️ les **migrations complètes**
 
+
 👉 Indiquez-moi la prochaine étape.
 ```
