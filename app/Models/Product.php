@@ -4,11 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Models\Fournisseur;
 class Product extends Model
 {
     use HasFactory;
-    protected $fillable = ['title','description','price','image','user_id','category_id'];
+    protected $fillable = ['title','description','price','image','user_id','category_id','fournisseur_id'];
 
     public function user(){
         return $this->belongsTo(User::class);
