@@ -15,25 +15,25 @@
         </div>
 
         <div class="max-w-xl border border-gray-200 rounded-lg p-6 ">
-            <form action="{{ route('admin.fournisseurs.update',$fournisseur->id) }}" method="POST" class="space-y-5">
-                @csrf
-                @method('PUT')
+            <form action="<?php echo e(route('admin.fournisseurs.update',$fournisseur->id)); ?>" method="POST" class="space-y-5">
+                <?php echo csrf_field(); ?>
+                <?php echo method_field('PUT'); ?>
                 <div>
                     <label class="block text-sm mb-1">Nom</label>
-                    <input type="text" name="name" value="{{ $fournisseur->name }}"
+                    <input type="text" name="name" value="<?php echo e($fournisseur->name); ?>"
                            class="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-black">
                 </div>
 
                 
                 <div>
                     <label class="block text-sm mb-1">Email</label>
-                    <input type="email" name="email" value="{{ $fournisseur->email }}"
+                    <input type="email" name="email" value="<?php echo e($fournisseur->email); ?>"
                            class="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-black">
                 </div>
 
                 <div>
                     <label class="block text-sm mb-1">Téléphone</label>
-                    <input type="text" name="phone" value="{{ $fournisseur->phone }}"
+                    <input type="text" name="phone" value="<?php echo e($fournisseur->phone); ?>"
                            class="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-black">
                 </div>
 
@@ -55,3 +55,4 @@
 
 </body>
 </html>
+<?php /**PATH C:\laragon\www\TifawinSoukV2\resources\views/admin/fournisseurs/edit.blade.php ENDPATH**/ ?>

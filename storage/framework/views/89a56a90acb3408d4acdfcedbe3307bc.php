@@ -10,10 +10,10 @@
     <div class="min-h-screen p-8">
         <div class="w-full flex justify-between mb-2">
             <h1 class="text-2xl font-semibold mb-6">
-                Liste des fournisseurs
+                Archive des fournisseurs
             </h1>
 
-            <a href="fournisseurs/create" class="rounded-2xl p-2 bg-black text-white flex items-center justify-center">Ajoute un fournisseurs</a>
+            <a href="<?php echo e(route('admin.fournisseurs.index')); ?>" class="rounded-2xl p-2 text-black flex items-center justify-center">< Retour</a>
         </div>
 
         <div class="overflow-x-auto border border-gray-200 rounded-lg">
