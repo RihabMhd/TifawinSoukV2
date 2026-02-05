@@ -33,8 +33,15 @@
                         <td class="px-6 py-4"><?php echo e($fournisseur_archive->email); ?></td>
                         <td class="px-6 py-4"><?php echo e($fournisseur_archive->phone); ?></td>
                         <td class="px-6 py-4 flex flex-wrap gap-5">
-                            <a href="<?php echo e(route('admin.fournisseurs.archive')); ?>" class="text-yellow-500">rej3o</a>
-                            <a href="<?php echo e(route('admin.fournisseurs.edit')); ?>" class="text-red-800">Supprime</a>
+                            <form action="<?php echo e(route('admin.fournisseurs.restore',$fournisseur_archive->id)); ?>" method="post">
+                                <?php echo csrf_field(); ?>
+                                <button type="submit" class="text-yellow-500">Restore</button>
+                            </form>
+                            <form action="<?php echo e(route('admin.fournisseurs.destroy',$fournisseur_archive->id)); ?>" method="post">
+                                <?php echo csrf_field(); ?>
+                                <?php echo method_field('DELETE'); ?>
+                                <button type="submit" class="text-red-500">Supprime</button>
+                            </form>
                         </td>
                     </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

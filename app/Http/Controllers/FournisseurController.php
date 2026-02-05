@@ -82,15 +82,20 @@ class FournisseurController extends Controller
         $fournisseur->delete();        
         return redirect()->route('admin.fournisseurs.index');
     }
+    public function restore(string $id){
+        Fournisseur::onlyTrashed()->where('id',$id)->restore();
+        return redirect()->route('admin.fournisseurs.archive');
+    }
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-        $fournisseur = Fournisseur::findOrFail($id);
+        // hnaya kanjibo ga3 les fournisseur m3a dok li deleted_at machi null o li id dyalo kaysssawi li jay flparametre
+        $fournisseur = Fournisseur::withTrashed()->findOrFail($id);
+        // o kandiro lih force delete 7it delete 3adiya ghadi ghir diro flarchive 7it sste3melt use softedelete fl models
         $fournisseur->forceDelete();
-
         return redirect()->route('admin.fournisseurs.index')->with('success', 'Fournisseur deleted successfully!');
     }
 }

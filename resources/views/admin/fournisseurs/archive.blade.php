@@ -33,8 +33,15 @@
                         <td class="px-6 py-4">{{ $fournisseur_archive->email }}</td>
                         <td class="px-6 py-4">{{ $fournisseur_archive->phone }}</td>
                         <td class="px-6 py-4 flex flex-wrap gap-5">
-                            <a href="{{ route('admin.fournisseurs.archive') }}" class="text-yellow-500">rej3o</a>
-                            <a href="{{ route('admin.fournisseurs.edit') }}" class="text-red-800">Supprime</a>
+                            <form action="{{ route('admin.fournisseurs.restore',$fournisseur_archive->id) }}" method="post">
+                                @csrf
+                                <button type="submit" class="text-yellow-500">Restore</button>
+                            </form>
+                            <form action="{{ route('admin.fournisseurs.destroy',$fournisseur_archive->id) }}" method="post">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-500">Supprime</button>
+                            </form>
                         </td>
                     </tr>
                     @endforeach
