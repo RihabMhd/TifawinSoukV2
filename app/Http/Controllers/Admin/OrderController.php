@@ -12,7 +12,7 @@ class OrderController extends Controller
     public function dashboard()
     {
         // chiffre daffaires du jour
-        
+        //where with dates created_at, updated....
         $revenueToday = Order::whereDate('created_at', today())
             ->sum('total_amount');
 
@@ -21,6 +21,7 @@ class OrderController extends Controller
             ->count();
 
         //  Commandes en attente
+        //where with colones
         $pendingOrders = Order::where('status', 'En attente')
             ->count();
 
