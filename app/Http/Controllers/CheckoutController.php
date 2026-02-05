@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Cart;
 
 class CheckoutController extends Controller
 {
@@ -13,14 +14,14 @@ class CheckoutController extends Controller
      */
     public function index()
     {
-        $cart = auth()->user()->cart;
-        
-        // Redirect if cart is empty
+        $cart = Cart::getOrCreate();
+
+        // redirect if cart is vide
         if (!$cart || $cart->items->isEmpty()) {
             return redirect()->route('cart.index')
                 ->with('error', 'Votre panier est vide.');
         }
-        
+
         return view('checkout.index', compact('cart'));
     }
 
@@ -45,7 +46,7 @@ class CheckoutController extends Controller
             'terms_accepted' => 'required|accepted',
         ]);
 
-        $cart = auth()->user()->cart;
+        $cart = Cart::getOrCreate();
 
         // Check if cart is still valid
         if (!$cart || $cart->items->isEmpty()) {
@@ -59,7 +60,7 @@ class CheckoutController extends Controller
                 'user_id' => auth()->id(),
                 'order_number' => $this->generateOrderNumber(),
                 'status' => 'pending',
-                
+
                 // Shipping information
                 'first_name' => $validated['first_name'],
                 'last_name' => $validated['last_name'],
@@ -70,19 +71,23 @@ class CheckoutController extends Controller
                 'postal_code' => $validated['postal_code'],
                 'city' => $validated['city'],
                 'country' => $validated['country'],
-                
+
                 // Payment and totals
                 'payment_method' => $validated['payment_method'],
                 'subtotal' => $cart->getTotal(),
                 'tax' => $cart->getTotal() * 0.20, // 20% TVA
                 'total' => $cart->getTotal() * 1.20,
-                
+
                 // Notes
                 'order_notes' => $validated['order_notes'] ?? null,
             ]);
 
             // Create order items from cart items
             foreach ($cart->items as $cartItem) {
+
+                if ($cartItem->product->quantity < $cartItem->quantity) {
+                    return redirect()->back()->with('error', "Stock insuffisant pour {$cartItem->product->title}");
+                }
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $cartItem->product_id,
@@ -90,6 +95,8 @@ class CheckoutController extends Controller
                     'price' => $cartItem->price_at_addition,
                     'subtotal' => $cartItem->getSubtotal(),
                 ]);
+                
+                $cartItem->product->decrement('quantity', $cartItem->quantity);
             }
 
             // Clear the cart
@@ -98,7 +105,6 @@ class CheckoutController extends Controller
             // Redirect to order confirmation page
             return redirect()->route('orders.show', $order)
                 ->with('success', 'Votre commande a été passée avec succès !');
-
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()

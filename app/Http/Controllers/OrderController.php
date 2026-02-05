@@ -59,4 +59,6 @@ class OrderController extends Controller
         return redirect()->route('orders.index')
             ->with('success', 'Votre commande a été annulée avec succès.');
     }
+
+    
 }

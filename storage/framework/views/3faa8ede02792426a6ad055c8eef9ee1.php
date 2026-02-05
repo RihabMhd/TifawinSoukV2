@@ -159,8 +159,15 @@
 <?php $attributes = $attributes->except(collect($constructor->getParameters())->map->getName()->all()); ?>
 <?php endif; ?>
 <?php $component->withAttributes(['href' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(route('orders.index')),'active' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(request()->routeIs('orders.*'))]); ?>
-                            <?php echo e(__('Mes Commandes')); ?>
-
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.5">
+                                    <path
+                                        d="M17.616 19.75a3.64 3.64 0 0 0 3.634-3.645a3.64 3.64 0 0 0-3.634-3.645a3.64 3.64 0 0 0-3.634 3.645a3.64 3.64 0 0 0 3.634 3.645m-11.232 0a3.64 3.64 0 0 0 3.634-3.645a3.64 3.64 0 0 0-3.634-3.645a3.64 3.64 0 0 0-3.634 3.645a3.64 3.64 0 0 0 3.634 3.645" />
+                                    <path
+                                        d="M10.018 16.105V6.16c0-3.004-3.364-2.042-4.17 0c0 0-2.004 6.294-2.933 8.849m7.103-3.519s.681.674 1.982.674s1.982-.674 1.982-.674m-3.964 3.645s.681.674 1.982.674s1.982-.674 1.982-.674m0 .971V6.16c0-3.004 3.364-2.042 4.17 0c0 0 2.004 6.294 2.933 8.849" />
+                                </g>
+                            </svg>
                          <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginalc295f12dca9d42f28a259237a5724830)): ?>

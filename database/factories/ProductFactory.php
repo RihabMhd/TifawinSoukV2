@@ -16,12 +16,10 @@ class ProductFactory extends Factory
             'description' => fake()->paragraph(5),
             'price' => fake()->randomFloat(2, 10, 5000),
             'image' => fake()->imageUrl(640, 480, 'products'),
-
-            'user_id' =>User::inRandomOrder()->first()->id,
-            'category_id' =>Category::inRandomOrder()->first()->id,
-
+            'quantity' => fake()->numberBetween(0, 100),
+            'user_id' => User::inRandomOrder()->first()->id,
+            'category_id' => Category::inRandomOrder()->first()->id,
             'fournisseur_id' => Fournisseur::inRandomOrder()->first()->id,
-
             'created_at' => now(),
             'updated_at' => now(),
         ];

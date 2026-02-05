@@ -15,7 +15,7 @@ class CartController extends Controller
     public function index()
     {
         $cart = Cart::getOrCreate();
-        
+
         return view('cart.index', compact('cart'));
     }
 
@@ -25,26 +25,39 @@ class CartController extends Controller
     public function add(Request $request, $id)
     {
         $product = Product::findOrFail($id);
-        
+
         $request->validate([
             'quantity' => 'nullable|integer|min:1',
         ]);
-        
+
         $quantity = $request->quantity ?? 1;
-        
-        // Récupérer le panier (session ou base de données selon connexion)
+
+
+        if ($product->quantity < 1) {
+            return redirect()->back()->with('error', 'Produit en rupture de stock.');
+        }
+
         $cart = Cart::getOrCreate();
-        
-        // Vérifier si le produit existe déjà
-        $cartItem = $cart->items()->where('product_id', $product->id)->first();
-        
+
+        $cartItem = $cart->items()
+            ->where('product_id', $product->id)
+            ->first();
+
+        $currentQuantity = $cartItem?->quantity ?? 0;
+
+
+        if ($currentQuantity + $quantity > $product->quantity) {
+            return redirect()->back()->with(
+                'error',
+                'Stock insuffisant. Disponible : ' . $product->quantity
+            );
+        }
+
         if ($cartItem) {
-            // Augmenter la quantité
             $cartItem->update([
-                'quantity' => $cartItem->quantity + $quantity
+                'quantity' => $currentQuantity + $quantity,
             ]);
         } else {
-            // Créer un nouvel item
             CartItem::create([
                 'cart_id' => $cart->id,
                 'product_id' => $product->id,
@@ -52,9 +65,10 @@ class CartController extends Controller
                 'price_at_addition' => $product->price,
             ]);
         }
-        
+
         return redirect()->back()->with('success', 'Produit ajouté au panier !');
     }
+
 
     /**
      * Mettre à jour la quantité
@@ -64,18 +78,24 @@ class CartController extends Controller
         $request->validate([
             'quantity' => 'required|integer|min:1',
         ]);
-        
-        // Vérifier que l'item appartient au bon panier
+
         $cart = Cart::getOrCreate();
-        
+
         if ($cartItem->cart_id !== $cart->id) {
             return redirect()->back()->with('error', 'Action non autorisée.');
         }
-        
+
+        if ($request->quantity > $cartItem->product->quantity) {
+            return redirect()->back()->with(
+                'error',
+                'Stock insuffisant. Disponible : ' . $cartItem->product->quantity
+            );
+        }
+
         $cartItem->update([
-            'quantity' => $request->quantity
+            'quantity' => $request->quantity,
         ]);
-        
+
         return redirect()->back()->with('success', 'Quantité mise à jour !');
     }
 
@@ -86,13 +106,13 @@ class CartController extends Controller
     {
         // Vérifier que l'item appartient au bon panier
         $cart = Cart::getOrCreate();
-        
+
         if ($cartItem->cart_id !== $cart->id) {
             return redirect()->back()->with('error', 'Action non autorisée.');
         }
-        
+
         $cartItem->delete();
-        
+
         return redirect()->back()->with('success', 'Produit supprimé du panier !');
     }
 
@@ -103,7 +123,7 @@ class CartController extends Controller
     {
         $cart = Cart::getOrCreate();
         $cart->items()->delete();
-        
+
         return redirect()->back()->with('success', 'Panier vidé !');
     }
 }
