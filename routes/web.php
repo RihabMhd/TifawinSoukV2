@@ -37,9 +37,11 @@ Route::middleware(['auth', 'admin'])->group(function () {
     
 });
  Route::get('/admin/fournisseurs/create', [FournisseurController::class, 'create'])->name('admin.fournisseurs.create');
+ Route::get('/admin/fournisseurs/archive', [FournisseurController::class, 'archive'])->name('admin.fournisseurs.archive');
  Route::post('/admin/fournisseurs', [FournisseurController::class, 'store'])->name('admin.fournisseurs.store');
  Route::get('/admin/fournisseurs/edit', [FournisseurController::class, 'edit'])->name('admin.fournisseurs.edit');
  Route::put('/admin/fournisseurs/{id}', [FournisseurController::class, 'update'])->name('admin.fournisseurs.update');
  Route::get('/admin/fournisseurs', [FournisseurController::class, 'index'])->name('admin.fournisseurs.index');
  Route::delete('/admin/fournisseurs/{id}', [FournisseurController::class, 'destroy'])->name('admin.fournisseurs.destroy');
+ Route::delete('/admin/fournisseurs/{id}', [FournisseurController::class, 'trash'])->name('admin.fournisseurs.trash');
 require __DIR__.'/auth.php';

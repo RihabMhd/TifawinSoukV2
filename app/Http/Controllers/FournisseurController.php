@@ -73,13 +73,23 @@ class FournisseurController extends Controller
         return redirect()->route('admin.fournisseurs.index')->with('success', 'Fournisseur updated successfully!');
     }
 
+    public function archive(Request $request){
+        $fournisseurs_archives = Fournisseur::onlyTrashed()->get();
+        return view('admin.fournisseurs.archive',compact('fournisseurs_archives'));
+    }
+    public function trash(string $id){
+        $fournisseur = Fournisseur::findOrFail($id);
+        $fournisseur->delete();        
+        return redirect()->route('admin.fournisseurs.index');
+    }
+
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
         $fournisseur = Fournisseur::findOrFail($id);
-        $fournisseur->delete();
+        $fournisseur->forceDelete();
 
         return redirect()->route('admin.fournisseurs.index')->with('success', 'Fournisseur deleted successfully!');
     }

@@ -14,7 +14,6 @@
             </h1>
 
             <a href="fournisseurs/create" class="rounded-2xl p-2 bg-black text-white flex items-center justify-center">Ajoute un fournisseurs</a>
-            <a href="fournisseurs/archive" class="rounded-2xl p-2 bg-black text-white flex items-center justify-center">Archive</a>
         </div>
 
         <div class="overflow-x-auto border border-gray-200 rounded-lg">
@@ -28,22 +27,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($fournisseurs as $fournisseur)
+                    @foreach ($fournisseurs_archives as $fournisseur_archive)
                     <tr class="border-b hover:bg-gray-100">
-                        <td class="px-6 py-4">{{ $fournisseur->name }}</td>
-                        <td class="px-6 py-4">{{ $fournisseur->email }}</td>
-                        <td class="px-6 py-4">{{ $fournisseur->phone }}</td>
+                        <td class="px-6 py-4">{{ $fournisseur_archive->name }}</td>
+                        <td class="px-6 py-4">{{ $fournisseur_archive->email }}</td>
+                        <td class="px-6 py-4">{{ $fournisseur_archive->phone }}</td>
                         <td class="px-6 py-4 flex flex-wrap gap-5">
-                            <form action="{{ route('admin.fournisseurs.trash',$fournisseur->id) }}" method="post">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-red-500">archive</button>
-                            </form>
-                            <form action="{{ route('admin.fournisseurs.update',$fournisseur->id) }}" method="post">
-                                @csrf
-                                @method('UPDATE')
-                                <button type="submit" class="text-yellow-500">edit</button>
-                            </form>
+                            <a href="{{ route('admin.fournisseurs.archive') }}" class="text-yellow-500">rej3o</a>
+                            <a href="{{ route('admin.fournisseurs.edit') }}" class="text-red-800">Supprime</a>
                         </td>
                     </tr>
                     @endforeach
