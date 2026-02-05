@@ -47,4 +47,49 @@ class Cart extends Model
     {
         return $this->items->sum('quantity');
     }
+
+     public static function mergeSessionToDatabase($user)
+    {
+        if ($user->role_id != 3) {
+            return;
+        }
+
+       
+        $sessionCart = self::where('session_id', session()->getId())
+            ->with('items.product')
+            ->first();
+
+ 
+        if (!$sessionCart || $sessionCart->items->isEmpty()) {
+            return;
+        }
+
+      
+        $userCart = self::firstOrCreate([
+            'user_id' => $user->id
+        ]);
+
+      
+        foreach ($sessionCart->items as $sessionItem) {
+            $existingItem = $userCart->items()
+                ->where('product_id', $sessionItem->product_id)
+                ->first();
+
+            if ($existingItem) {
+                $existingItem->update([
+                    'quantity' => $existingItem->quantity + $sessionItem->quantity
+                ]);
+            } else {
+                CartItem::create([
+                    'cart_id' => $userCart->id,
+                    'product_id' => $sessionItem->product_id,
+                    'quantity' => $sessionItem->quantity,
+                    'price_at_addition' => $sessionItem->price_at_addition,
+                ]);
+            }
+        }
+
+        $sessionCart->items()->delete();
+        $sessionCart->delete();
+    }
 }

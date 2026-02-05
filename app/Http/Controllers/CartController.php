@@ -1,117 +1,109 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 
 class CartController extends Controller
 {
+    /**
+     * Afficher le panier
+     */
     public function index()
     {
-        $cart = Cart::getOrCreate()
-            ->load('items.product.primaryImage');
-
+        $cart = Cart::getOrCreate();
+        
         return view('cart.index', compact('cart'));
     }
 
-  
-    public function add(Request $request): JsonResponse
+    /**
+     * Ajouter un produit au panier
+     */
+    public function add(Request $request, $id)
     {
-        $data = $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'quantity'   => 'required|integer|min:1',
+        $product = Product::findOrFail($id);
+        
+        $request->validate([
+            'quantity' => 'nullable|integer|min:1',
         ]);
-
-        $product = Product::findOrFail($data['product_id']);
-
-        if ($product->stock < $data['quantity']) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Stock insuffisant',
-            ], 422);
-        }
-
+        
+        $quantity = $request->quantity ?? 1;
+        
+        // Récupérer le panier (session ou base de données selon connexion)
         $cart = Cart::getOrCreate();
-
-        $cartItem = CartItem::firstOrNew([
-            'cart_id'    => $cart->id,
-            'product_id' => $product->id,
-        ]);
-
-        $newQuantity = ($cartItem->exists ? $cartItem->quantity : 0) + $data['quantity'];
-
-        if ($product->stock < $newQuantity) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Stock insuffisant pour cette quantité',
-            ], 422);
+        
+        // Vérifier si le produit existe déjà
+        $cartItem = $cart->items()->where('product_id', $product->id)->first();
+        
+        if ($cartItem) {
+            // Augmenter la quantité
+            $cartItem->update([
+                'quantity' => $cartItem->quantity + $quantity
+            ]);
+        } else {
+            // Créer un nouvel item
+            CartItem::create([
+                'cart_id' => $cart->id,
+                'product_id' => $product->id,
+                'quantity' => $quantity,
+                'price_at_addition' => $product->price,
+            ]);
         }
-
-        $cartItem->quantity = $newQuantity;
-        $cartItem->save(); 
-
-        return response()->json([
-            'success'     => true,
-            'cart_count' => $cart->getItemsCount(),
-            'message'     => 'Produit ajouté',
-        ]);
+        
+        return redirect()->back()->with('success', 'Produit ajouté au panier !');
     }
 
-    public function update(Request $request, CartItem $cartItem): JsonResponse
+    /**
+     * Mettre à jour la quantité
+     */
+    public function update(Request $request, CartItem $cartItem)
     {
-        $cart = Cart::getOrCreate();
-
-        if ($cartItem->cart_id !== $cart->id) {
-            abort(403);
-        }
-
-        $data = $request->validate([
+        $request->validate([
             'quantity' => 'required|integer|min:1',
         ]);
-
-        $cartItem->update([
-            'quantity' => $data['quantity'],
-        ]);
-
-        $cart->load('items');
-
-        return response()->json([
-            'success'  => true,
-            'subtotal' => $cartItem->getSubtotal(),
-            'total'    => $cart->getTotal(),
-        ]);
-    }
-
-
-    public function remove(CartItem $cartItem): JsonResponse
-    {
+        
+        // Vérifier que l'item appartient au bon panier
         $cart = Cart::getOrCreate();
-
+        
         if ($cartItem->cart_id !== $cart->id) {
-            abort(403);
+            return redirect()->back()->with('error', 'Action non autorisée.');
         }
-
-        $cartItem->delete();
-
-        return response()->json([
-            'success' => true,
-            'total'   => $cart->getTotal(),
+        
+        $cartItem->update([
+            'quantity' => $request->quantity
         ]);
+        
+        return redirect()->back()->with('success', 'Quantité mise à jour !');
     }
 
+    /**
+     * Supprimer un item du panier
+     */
+    public function remove(CartItem $cartItem)
+    {
+        // Vérifier que l'item appartient au bon panier
+        $cart = Cart::getOrCreate();
+        
+        if ($cartItem->cart_id !== $cart->id) {
+            return redirect()->back()->with('error', 'Action non autorisée.');
+        }
+        
+        $cartItem->delete();
+        
+        return redirect()->back()->with('success', 'Produit supprimé du panier !');
+    }
 
-    public function clear(): JsonResponse
+    /**
+     * Vider le panier
+     */
+    public function clear()
     {
         $cart = Cart::getOrCreate();
-
         $cart->items()->delete();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Panier vidé',
-        ]);
+        
+        return redirect()->back()->with('success', 'Panier vidé !');
     }
 }

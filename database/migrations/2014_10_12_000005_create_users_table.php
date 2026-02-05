@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('phone')->nullable();
             $table->string('image')->nullable();
-            $table->foreignId('role_id')->constrained();
+            $table->foreignId('role_id')->constrained()->default(3);
             $table->rememberToken();
             $table->timestamps();
         });
