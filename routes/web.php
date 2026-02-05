@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
+use app\Http\Controllers\Admin\OrderController;
+use PHPUnit\Metadata\Group;
+require __DIR__.'/auth.php';
 
 Route::get('/', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
@@ -46,3 +49,24 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 
 require __DIR__ . '/auth.php';
+//Admin Orders
+Route::middleware(['auth', 'admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+
+        Route::get('/orders/dashboard', [OrderController::class, 'dashboard'])
+            ->name('orders.dashboard');
+
+        Route::get('/orders', [OrderController::class, 'index'])
+            ->name('orders.index');
+
+        Route::get('/orders/{order}', [OrderController::class, 'show'])
+            ->name('orders.show');
+
+        Route::put('/orders/{order}/status', [OrderController::class, 'updateStatus'])
+            ->name('orders.updateStatus');
+
+        Route::delete('/orders/{order}', [OrderController::class, 'cancel'])
+            ->name('orders.cancel');
+    });
