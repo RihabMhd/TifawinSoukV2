@@ -12,9 +12,9 @@ class FournisseurController extends Controller
      */
     public function index()
     {
-        $fournisseur = Fournisseur::all();
+        $fournisseurs = Fournisseur::all();
 
-        return view('admin.fournisseurs.index', compact('fournisseur'));
+        return view('admin.fournisseurs.index', compact('fournisseurs'));
     }
 
     /**
@@ -33,7 +33,7 @@ class FournisseurController extends Controller
         $data = $request->validate([
             'name' => 'required|string',
             'phone' => 'required|string|max:20',
-            'address' => 'required|string',
+            'email' => 'required|string',
         ]);
         Fournisseur::create($data);
 
@@ -65,7 +65,7 @@ class FournisseurController extends Controller
         $data = $request->validate([
             'name' => 'required|string',
             'phone' => 'required',
-            'address' => 'required|string',
+            'email' => 'required|string',
         ]);
 
         $fournisseur->update($data);

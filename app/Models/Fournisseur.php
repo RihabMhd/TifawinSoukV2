@@ -9,7 +9,7 @@ class Fournisseur extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'phone', 'address'];
+    protected $fillable = ['name','email', 'phone'];
 
     public function products(){
         return $this->hasMany(Product::class);

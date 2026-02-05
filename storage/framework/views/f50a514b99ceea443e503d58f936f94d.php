@@ -1,1 +1,1 @@
-hhh<?php /**PATH C:\laragon\www\TifawinSoukV2\resources\views/admin/fournisseurs/index.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\laragon\www\TifawinSoukV2\resources\views/admin/fournisseurs/index.blade.php ENDPATH**/ ?>
