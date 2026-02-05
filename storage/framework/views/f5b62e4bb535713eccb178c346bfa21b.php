@@ -1,0 +1,1 @@
+<?php /**PATH C:\laragon\www\TifawinSoukV2\resources\views/admin/fournisseurs/create.blade.php ENDPATH**/ ?>
