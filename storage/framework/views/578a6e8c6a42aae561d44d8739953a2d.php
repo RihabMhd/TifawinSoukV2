@@ -18,7 +18,7 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            <!-- Messages de succès/erreur -->
+          
             <?php if(session('success')): ?>
                 <div class="mb-4 px-4 py-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
                     <p class="text-sm text-green-800 dark:text-green-200">
@@ -37,7 +37,7 @@
                 </div>
             <?php endif; ?>
 
-            <!-- Panier vide -->
+           
             <?php if($cart->items->isEmpty()): ?>
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-12 text-center">
@@ -64,10 +64,10 @@
                 </div>
             <?php else: ?>
 
-            <!-- Panier avec produits -->
+            
             <div class="grid grid-cols-1 lg:grid-cols-10 gap-6">
 
-                <!-- Liste des produits -->
+               
                 <div class="lg:col-span-7 bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="overflow-x-auto">
                         <table class="w-full">
@@ -155,7 +155,7 @@
                     </div>
                 </div>
 
-                <!-- Résumé de la commande -->
+             
                 <div class="lg:col-span-3">
                     <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6 sticky top-24">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">

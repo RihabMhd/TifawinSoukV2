@@ -8,7 +8,6 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            <!-- Messages de succès/erreur -->
             @if(session('success'))
                 <div class="mb-4 px-4 py-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
                     <p class="text-sm text-green-800 dark:text-green-200">
@@ -25,7 +24,6 @@
                 </div>
             @endif
 
-            <!-- Pas de commandes -->
             @if($orders->isEmpty())
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-12 text-center">
@@ -52,7 +50,6 @@
                 </div>
             @else
 
-            <!-- Liste des commandes -->
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="overflow-x-auto">
                     <table class="w-full">
@@ -144,7 +141,6 @@
                     </table>
                 </div>
 
-                <!-- Pagination -->
                 @if($orders->hasPages())
                 <div class="px-6 py-4 border-t dark:border-gray-700">
                     {{ $orders->links() }}
@@ -154,7 +150,6 @@
 
             @endif
 
-            <!-- Statistiques rapides -->
             @if($orders->isNotEmpty())
             <div class="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">

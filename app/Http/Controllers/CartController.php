@@ -14,6 +14,7 @@ class CartController extends Controller
      */
     public function index()
     {
+        // get the current user cart or create a new one
         $cart = Cart::getOrCreate();
 
         return view('cart.index', compact('cart'));
@@ -30,22 +31,24 @@ class CartController extends Controller
             'quantity' => 'nullable|integer|min:1',
         ]);
 
+        // if the quantity did not come with the request we set it to 1
         $quantity = $request->quantity ?? 1;
 
-
+        // check if our product is not out of stock
         if ($product->quantity < 1) {
             return redirect()->back()->with('error', 'Produit en rupture de stock.');
         }
 
         $cart = Cart::getOrCreate();
 
+        // check if our product is already in the cart
         $cartItem = $cart->items()
             ->where('product_id', $product->id)
             ->first();
 
         $currentQuantity = $cartItem?->quantity ?? 0;
 
-
+        // check if adding the requested quantity exceeds available stock of the product
         if ($currentQuantity + $quantity > $product->quantity) {
             return redirect()->back()->with(
                 'error',
@@ -104,7 +107,6 @@ class CartController extends Controller
      */
     public function remove(CartItem $cartItem)
     {
-        // Vérifier que l'item appartient au bon panier
         $cart = Cart::getOrCreate();
 
         if ($cartItem->cart_id !== $cart->id) {

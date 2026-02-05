@@ -30,7 +30,6 @@ class CheckoutController extends Controller
      */
     public function process(Request $request)
     {
-        // Validate the form data
         $validated = $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
@@ -48,20 +47,19 @@ class CheckoutController extends Controller
 
         $cart = Cart::getOrCreate();
 
-        // Check if cart is still valid
         if (!$cart || $cart->items->isEmpty()) {
             return redirect()->route('cart.index')
                 ->with('error', 'Votre panier est vide.');
         }
 
         try {
-            // Create the order
+            // create the order
             $order = Order::create([
                 'user_id' => auth()->id(),
                 'order_number' => $this->generateOrderNumber(),
                 'status' => 'pending',
 
-                // Shipping information
+                // shipping information
                 'first_name' => $validated['first_name'],
                 'last_name' => $validated['last_name'],
                 'email' => $validated['email'],
@@ -72,17 +70,16 @@ class CheckoutController extends Controller
                 'city' => $validated['city'],
                 'country' => $validated['country'],
 
-                // Payment and totals
+                // payment and totals
                 'payment_method' => $validated['payment_method'],
                 'subtotal' => $cart->getTotal(),
-                'tax' => $cart->getTotal() * 0.20, // 20% TVA
+                'tax' => $cart->getTotal() * 0.20, 
                 'total' => $cart->getTotal() * 1.20,
 
-                // Notes
                 'order_notes' => $validated['order_notes'] ?? null,
             ]);
 
-            // Create order items from cart items
+            // create order items from cart items
             foreach ($cart->items as $cartItem) {
 
                 if ($cartItem->product->quantity < $cartItem->quantity) {
@@ -99,10 +96,8 @@ class CheckoutController extends Controller
                 $cartItem->product->decrement('quantity', $cartItem->quantity);
             }
 
-            // Clear the cart
             $cart->items()->delete();
 
-            // Redirect to order confirmation page
             return redirect()->route('orders.show', $order)
                 ->with('success', 'Votre commande a été passée avec succès !');
         } catch (\Exception $e) {

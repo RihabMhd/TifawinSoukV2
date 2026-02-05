@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class OrderController extends Controller
 {
     /**
-     * Display a listing of the user's orders
+     * Display a listing of the users orders
      */
     public function index()
     {
@@ -25,28 +25,27 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
-        // Make sure the user can only view their own orders
+        // make sure the user can view his own orders
         if ($order->user_id !== auth()->id()) {
             abort(403, 'Vous n\'êtes pas autorisé à voir cette commande.');
         }
 
-        // Load the order items with products
+        // load the order items with products
         $order->load('items.product');
 
         return view('orders.show', compact('order'));
     }
 
     /**
-     * Cancel an order (only if pending)
+     * Cancel an order
      */
     public function cancel(Order $order)
     {
-        // Make sure the user owns this order
         if ($order->user_id !== auth()->id()) {
             abort(403, 'Vous n\'êtes pas autorisé à annuler cette commande.');
         }
 
-        // Only allow cancellation if order is pending
+        // only allow cancelltion if order status is pending
         if ($order->status !== 'pending') {
             return redirect()->back()
                 ->with('error', 'Cette commande ne peut plus être annulée.');

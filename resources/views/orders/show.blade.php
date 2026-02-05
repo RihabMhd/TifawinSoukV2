@@ -8,7 +8,6 @@
     <div class="py-12">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
 
-            <!-- Message de succès -->
             @if(session('success'))
                 <div class="mb-6 px-6 py-4 rounded-lg bg-green-50 dark:bg-green-900/20 border-2 border-green-200 dark:border-green-800">
                     <div class="flex items-center">
@@ -22,10 +21,8 @@
                 </div>
             @endif
 
-            <!-- Détails de la commande -->
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 
-                <!-- En-tête -->
                 <div class="p-6 border-b dark:border-gray-700">
                     <div class="flex justify-between items-start">
                         <div>
@@ -45,10 +42,10 @@
                     </div>
                 </div>
 
-                <!-- Informations de livraison et paiement -->
+                
                 <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 border-b dark:border-gray-700">
                     
-                    <!-- Adresse de livraison -->
+                    
                     <div>
                         <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-3">
                             Adresse de livraison
@@ -72,7 +69,7 @@
                         </div>
                     </div>
 
-                    <!-- Informations de paiement -->
+                   
                     <div>
                         <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-3">
                             Informations de paiement
@@ -101,7 +98,7 @@
                     </div>
                 </div>
 
-                <!-- Produits commandés -->
+              
                 <div class="p-6 border-b dark:border-gray-700">
                     <h4 class="font-semibold text-gray-900 dark:text-gray-100 mb-4">
                         Produits commandés
@@ -139,7 +136,7 @@
                     </div>
                 </div>
 
-                <!-- Résumé des totaux -->
+                
                 <div class="p-6 bg-gray-50 dark:bg-gray-900">
                     <div class="max-w-md ml-auto space-y-2">
                         <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400">
@@ -173,7 +170,7 @@
                     </div>
                 </div>
 
-                <!-- Actions -->
+       
                 <div class="p-6 bg-white dark:bg-gray-800 flex justify-between">
                     <a href="{{ route('orders.index') }}"
                        class="inline-flex items-center px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600">
