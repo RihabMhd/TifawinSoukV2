@@ -30,11 +30,43 @@
                             </x-nav-link>
                         @endif
                     @endauth
+
                 </div>
             </div>
 
             <!-- Right Side Navigation -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
+                <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.*')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                            stroke-width="1.5"
+                            d="M10.5 10h4m-2-2v4m4 9a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3m-8 0a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3M3.71 5.4h15.214c1.378 0 2.373 1.27 1.995 2.548l-1.654 5.6C19.01 14.408 18.196 15 17.27 15H8.112c-.927 0-1.742-.593-1.996-1.452zm0 0L3 3" />
+                    </svg>
+                    @php
+                        $cart = \App\Models\Cart::getOrCreate();
+                        $count = $cart->getItemsCount();
+                    @endphp
+                    @if ($count > 0)
+                        <span class="ml-1 bg-red-600 text-white text-xs px-2 py-1 rounded-full">
+                            {{ $count }}
+                        </span>
+                    @endif
+                </x-nav-link>
+                @auth
+                    @if (auth()->user()->role_id == 3)
+                        <x-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.*')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.5">
+                                    <path
+                                        d="M17.616 19.75a3.64 3.64 0 0 0 3.634-3.645a3.64 3.64 0 0 0-3.634-3.645a3.64 3.64 0 0 0-3.634 3.645a3.64 3.64 0 0 0 3.634 3.645m-11.232 0a3.64 3.64 0 0 0 3.634-3.645a3.64 3.64 0 0 0-3.634-3.645a3.64 3.64 0 0 0-3.634 3.645a3.64 3.64 0 0 0 3.634 3.645" />
+                                    <path
+                                        d="M10.018 16.105V6.16c0-3.004-3.364-2.042-4.17 0c0 0-2.004 6.294-2.933 8.849m7.103-3.519s.681.674 1.982.674s1.982-.674 1.982-.674m-3.964 3.645s.681.674 1.982.674s1.982-.674 1.982-.674m0 .971V6.16c0-3.004 3.364-2.042 4.17 0c0 0 2.004 6.294 2.933 8.849" />
+                                </g>
+                            </svg>
+                        </x-nav-link>
+                    @endif
+                @endauth
                 @auth
                     <!-- Settings Dropdown -->
                     <x-dropdown align="right" width="48">
