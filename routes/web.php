@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\admin\StockController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 
 use PHPUnit\Metadata\Group;
@@ -95,6 +96,9 @@ Route::middleware(['auth', 'admin'])
     });
 
 
-Route::get('/dashboard', [AdminOrderController::class, 'dashboard'])->name('dashboard');
+    // ================================== stocks ======================
+
+    Route::get('/admin/stock/dashboard',[StockController::class,'dashboard'])->name('admin.stock.dashboard');
+    Route::get('/dashboard', [AdminOrderController::class, 'dashboard'])->name('dashboard');
 
 
