@@ -80,7 +80,7 @@ Route::middleware(['auth', 'admin'])
         // Admin main dashboard
 
 
-        Route::get('/orders/dashboard', [OrderController::class, 'dashboard'])
+        Route::get('/orders/dashboard', [AdminOrderController::class, 'dashboard'])
             ->name('orders.dashboard');
 
         Route::get('/orders', [AdminOrderController::class, 'index'])
@@ -97,6 +97,4 @@ Route::middleware(['auth', 'admin'])
     });
 
 
-  Route::get('/dashboard', function () {
-            return view('admin.dashboard');
-        })->name('dashboard');
+  Route::get('/dashboard', [AdminOrderController::class,'dashboard'])->name('dashboard');

@@ -15,7 +15,7 @@
                 {{-- CA du jour --}}
                 <div class="bg-green-500 text-white rounded-lg p-6 shadow">
                     <p class="text-sm">CA du jour</p>
-                    <p class="text-2xl font-bold">{{ $revenueToday }} MAD</p>
+                    <p class="text-2xl font-bold"> {{ $revenueToday }} MAD</p>
                 </div>
 
                 {{-- Commandes du jour --}}
@@ -99,7 +99,7 @@
                                 <td class="px-6 py-3">{{ $order->created_at->format('d/m/Y') }}</td>
                                 <td class="px-6 py-3">
                                     <a href="{{ route('admin.orders.show', $order) }}"
-                                       class="text-indigo-600 hover:underline">
+                                    class="text-indigo-600 hover:underline">
                                         Détail
                                     </a>
                                 </td>
@@ -135,9 +135,9 @@
         new Chart(document.getElementById('statusChart'), {
             type: 'doughnut',
             data: {
-                labels: @json($statusLabels),
+                labels: {!! json_encode($chartLabels) !!},
                 datasets: [{
-                    data: @json($statusData),
+                    data: {!! json_encode($chartData) !!},
                     backgroundColor: ['#facc15', '#22c55e', '#ef4444']
                 }]
             }
