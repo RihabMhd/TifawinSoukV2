@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'password' => Hash::make('password'),
             'phone' => '+212 6 12 34 56 78',
-            'image' => null,
+            'image' => 'https/image.com',
             'role_id' => 1, // admin
             'created_at' => now(),
             'updated_at' => now(),
@@ -32,7 +32,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'password' => Hash::make('password'),
             'phone' => '+212 6 98 76 54 32',
-            'image' => null,
+            'image' => 'https/image.com',
             'role_id' => 2, // vendor
             'created_at' => now(),
             'updated_at' => now(),
@@ -44,7 +44,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'password' => Hash::make('password'),
             'phone' => '+212 6 11 22 33 44',
-            'image' => null,
+            'image' => 'https/image.com',
             'role_id' => 3, // customer
             'created_at' => now(),
             'updated_at' => now(),
