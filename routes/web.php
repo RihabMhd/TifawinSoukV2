@@ -7,9 +7,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
-use app\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+
 use PHPUnit\Metadata\Group;
-require __DIR__.'/auth.php';
+
+require __DIR__ . '/auth.php';
 
 Route::get('/', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
@@ -54,19 +56,18 @@ Route::middleware(['auth', 'admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
-
-        Route::get('/orders/dashboard', [OrderController::class, 'dashboard'])
+        Route::get('/orders/dashboard', [AdminOrderController::class, 'dashboard'])
             ->name('orders.dashboard');
 
-        Route::get('/orders', [OrderController::class, 'index'])
+        Route::get('/orders', [AdminOrderController::class, 'index'])
             ->name('orders.index');
 
-        Route::get('/orders/{order}', [OrderController::class, 'show'])
+        Route::get('/orders/{order}', [AdminOrderController::class, 'show'])
             ->name('orders.show');
 
-        Route::put('/orders/{order}/status', [OrderController::class, 'updateStatus'])
+        Route::put('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])
             ->name('orders.updateStatus');
 
-        Route::delete('/orders/{order}', [OrderController::class, 'cancel'])
+        Route::delete('/orders/{order}', [AdminOrderController::class, 'cancel'])
             ->name('orders.cancel');
     });
