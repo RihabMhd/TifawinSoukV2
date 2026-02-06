@@ -12,16 +12,18 @@ class OrderController extends Controller
     public function dashboard()
     {
         // chiffre daffaires du jour
-        
+        //where with dates created_at, updated....
         $revenueToday = Order::whereDate('created_at', today())
-            ->sum('total_amount');
+            ->sum('total');
+            // dd($revenueToday);
 
         //  Commandes du jour
         $ordersToday = Order::whereDate('created_at', today())
             ->count();
 
         //  Commandes en attente
-        $pendingOrders = Order::where('status', 'En attente')
+        //where with colones
+        $pendingOrders = Order::where('status', 'pending')
             ->count();
 
         // Commandes du mois
@@ -29,12 +31,13 @@ class OrderController extends Controller
             ->whereYear('created_at', now()->year)
             ->count();
 
-        // Top fivee produits vendus
-        $topProducts = OrderItem::select(
-                'product_name',
-                DB::raw('SUM(quantity) as total_sold')
+        // Top five products vendus
+        $topProducts = OrderItem::join('products', 'order_items.product_id', '=', 'products.id')
+            ->select(
+                'products.title as product_name',
+                DB::raw('SUM(order_items.quantity) as total_sold')
             )
-            ->groupBy('product_name')
+            ->groupBy('products.title')
             ->orderByDesc('total_sold')
             ->limit(5)
             ->get();
@@ -42,7 +45,7 @@ class OrderController extends Controller
         // Ventes 7 derniere jours
         $salesLast7Days = Order::select(
                 DB::raw('DATE(created_at) as date'),
-                DB::raw('SUM(total_amount) as total')
+                DB::raw('SUM(total) as total')
             )
             ->whereDate('created_at', '>=', now()->subDays(6))
             ->groupBy('date')
@@ -52,15 +55,33 @@ class OrderController extends Controller
         $chartLabels = $salesLast7Days->pluck('date');
         $chartData   = $salesLast7Days->pluck('total');
 
-        return view('admin.orders.dashboard', compact(
+        // Commandes récentes (Recents Orders)
+        $recentOrders = Order::latest()
+            ->take(5)
+            ->get();
+
+        // Statut des commandes (Chart data)
+        $ordersByStatus = Order::select('status', DB::raw('count(*) as count'))
+            ->groupBy('status')
+            ->get();
+
+        $statusLabels = $ordersByStatus->pluck('status');
+        $statusData = $ordersByStatus->pluck('count');
+        return view('admin.dashboard', compact(
             'revenueToday',
             'ordersToday',
             'pendingOrders',
             'ordersThisMonth',
             'topProducts',
             'chartLabels',
-            'chartData'
+            'chartData',
+            'recentOrders',
+            'statusLabels',
+            'statusData'
         ));
-    }
+
+
+
+        }
 
 }
