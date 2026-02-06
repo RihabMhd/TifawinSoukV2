@@ -9,13 +9,26 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::with(['user', 'category'])
-            ->latest()
-            ->paginate(12);
+        $categories = Category::withCount('products')->orderBy('title')->get();
+        
+
+        $query = Product::with(['user', 'category']);
+      
+        if ($request->has('category_id') && $request->category_id != '') {
+            $query->where('category_id', $request->category_id);
+        }
+        
+        
+        if ($request->has('search') && $request->search != '') {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
+        
+        
+        $products = $query->latest()->paginate(12)->withQueryString();
             
-        return view('products.index', compact('products'));
+        return view('products.index', compact('products', 'categories'));
         
     }
 

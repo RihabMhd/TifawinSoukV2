@@ -18,15 +18,22 @@
                         </x-nav-link>
                     @endauth
 
-                    <a href="{{ route('products.index') }}">
-                        <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
-                            {{ __('Products') }}
-                        </x-nav-link> </a>
+                    <x-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
+                        {{ __('Products') }}
+                    </x-nav-link>
 
                     @auth
                         @if (auth()->user()->isAdmin())
                             <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
                                 {{ __('Categories') }}
+                            </x-nav-link>
+
+                            <x-nav-link :href="route('admin.fournisseurs.index')" :active="request()->routeIs('admin.fournisseurs.*')">
+                                {{ __('Fournisseurs') }}
+                            </x-nav-link>
+
+                             <x-nav-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.*')">
+                                {{ __('Orders') }}
                             </x-nav-link>
                         @endif
                     @endauth
@@ -34,24 +41,27 @@
                 </div>
             </div>
 
-            <!-- Right Side Navigation -->
+           
             <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.*')">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                            stroke-width="1.5"
-                            d="M10.5 10h4m-2-2v4m4 9a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3m-8 0a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3M3.71 5.4h15.214c1.378 0 2.373 1.27 1.995 2.548l-1.654 5.6C19.01 14.408 18.196 15 17.27 15H8.112c-.927 0-1.742-.593-1.996-1.452zm0 0L3 3" />
-                    </svg>
-                    @php
-                        $cart = \App\Models\Cart::getOrCreate();
-                        $count = $cart->getItemsCount();
-                    @endphp
-                    @if ($count > 0)
-                        <span class="ml-1 bg-red-600 text-white text-xs px-2 py-1 rounded-full">
-                            {{ $count }}
-                        </span>
-                    @endif
-                </x-nav-link>
+                @if (!auth()->check() || !auth()->user()->isAdmin())
+                    <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.*')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                stroke-width="1.5"
+                                d="M10.5 10h4m-2-2v4m4 9a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3m-8 0a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3M3.71 5.4h15.214c1.378 0 2.373 1.27 1.995 2.548l-1.654 5.6C19.01 14.408 18.196 15 17.27 15H8.112c-.927 0-1.742-.593-1.996-1.452zm0 0L3 3" />
+                        </svg>
+                        @php
+                            $cart = \App\Models\Cart::getOrCreate();
+                            $count = $cart->getItemsCount();
+                        @endphp
+                        @if ($count > 0)
+                            <span class="ml-1 bg-red-600 text-white text-xs px-2 py-1 rounded-full">
+                                {{ $count }}
+                            </span>
+                        @endif
+                    </x-nav-link>
+                @endif
+
                 @auth
                     @if (auth()->user()->role_id == 3)
                         <x-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.*')">
@@ -67,8 +77,8 @@
                         </x-nav-link>
                     @endif
                 @endauth
+
                 @auth
-                    <!-- Settings Dropdown -->
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
                             <button
@@ -148,6 +158,37 @@
                 @if (auth()->user()->isAdmin())
                     <x-responsive-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
                         {{ __('Categories') }}
+                    </x-responsive-nav-link>
+
+                    <x-responsive-nav-link :href="route('admin.fournisseurs.index')" :active="request()->routeIs('admin.fournisseurs.*')">
+                        {{ __('Fournisseurs') }}
+                    </x-responsive-nav-link>
+
+                    <x-responsive-nav-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.*')">
+                        {{ __('Orders') }}
+                    </x-responsive-nav-link>
+                @endif
+            @endauth
+
+            @if (!auth()->check() || !auth()->user()->isAdmin())
+                <x-responsive-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.*')">
+                    {{ __('Cart') }}
+                    @php
+                        $cart = \App\Models\Cart::getOrCreate();
+                        $count = $cart->getItemsCount();
+                    @endphp
+                    @if ($count > 0)
+                        <span class="ml-1 bg-red-600 text-white text-xs px-2 py-1 rounded-full">
+                            {{ $count }}
+                        </span>
+                    @endif
+                </x-responsive-nav-link>
+            @endif
+
+            @auth
+                @if (auth()->user()->role_id == 3)
+                    <x-responsive-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.*')">
+                        {{ __('Orders') }}
                     </x-responsive-nav-link>
                 @endif
             @endauth
