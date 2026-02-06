@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -9,20 +10,27 @@ use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
+    public function index()
+    {
+        $orders = Order::with('user')
+            ->latest()
+            ->paginate(10);
+
+        return view('admin.orders.index', compact('orders'));
+    }
+
+
     public function dashboard()
     {
         // chiffre daffaires du jour
-        //where with dates created_at, updated....
         $revenueToday = Order::whereDate('created_at', today())
             ->sum('total');
-            // dd($revenueToday);
 
         //  Commandes du jour
         $ordersToday = Order::whereDate('created_at', today())
             ->count();
 
         //  Commandes en attente
-        //where with colones
         $pendingOrders = Order::where('status', 'pending')
             ->count();
 
@@ -44,9 +52,9 @@ class OrderController extends Controller
 
         // Ventes 7 derniere jours
         $salesLast7Days = Order::select(
-                DB::raw('DATE(created_at) as date'),
-                DB::raw('SUM(total) as total')
-            )
+            DB::raw('DATE(created_at) as date'),
+            DB::raw('SUM(total) as total')
+        )
             ->whereDate('created_at', '>=', now()->subDays(6))
             ->groupBy('date')
             ->orderBy('date')
@@ -67,6 +75,7 @@ class OrderController extends Controller
 
         $statusLabels = $ordersByStatus->pluck('status');
         $statusData = $ordersByStatus->pluck('count');
+
         return view('admin.dashboard', compact(
             'revenueToday',
             'ordersToday',
@@ -79,9 +88,33 @@ class OrderController extends Controller
             'statusLabels',
             'statusData'
         ));
+    }
+
+    public function show($id)
+    {
+        $order = Order::with(['items.product', 'user'])
+            ->findOrFail($id);
+
+        return view('admin.orders.show', compact('order'));
+    }
 
 
 
+    public function updateStatus($id)
+    {
+        $status = Request::input('status');
+
+
+        if (!in_array($status, ['pending', 'processing', 'shipped', 'delivered', 'cancelled'])) {
+            return redirect()->back()->with('error', 'Statut invalide');
         }
 
+        $order = Order::findOrFail($id);
+        $order->status = $status;
+        $order->save();
+
+        return redirect()
+            ->route('admin.orders.show', $order->id)
+            ->with('success', 'Statut de la commande mis à jour avec succès');
+    }
 }

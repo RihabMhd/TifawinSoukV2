@@ -42,6 +42,9 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::resource('categories', CategoryController::class);
 
+    Route::put('/admin/orders/{id}', [OrderController::class, 'update'])->name('admin.orders.update');
+    Route::get('/admin/orders', [OrderController::class, 'index'])->name('admin.orders.index');
+
     Route::get('/admin/products/create', [ProductController::class, 'create'])->name('admin.products.create');
     Route::post('/admin/products', [ProductController::class, 'store'])->name('admin.products.store');
     Route::get('/admin/products/{id}/edit', [ProductController::class, 'edit'])->name('admin.products.edit');
@@ -70,18 +73,13 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 
 require __DIR__ . '/auth.php';
-//Admin Orders & dashboard
-//Admin Orders
+
 Route::middleware(['auth', 'admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
 
-        // Admin main dashboard
 
-
-        Route::get('/orders/dashboard', [AdminOrderController::class, 'dashboard'])
-            ->name('orders.dashboard');
 
         Route::get('/orders', [AdminOrderController::class, 'index'])
             ->name('orders.index');
@@ -97,4 +95,6 @@ Route::middleware(['auth', 'admin'])
     });
 
 
-  Route::get('/dashboard', [AdminOrderController::class,'dashboard'])->name('dashboard');
+Route::get('/dashboard', [AdminOrderController::class, 'dashboard'])->name('dashboard');
+
+
