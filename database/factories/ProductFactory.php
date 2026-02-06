@@ -20,6 +20,7 @@ class ProductFactory extends Factory
             'user_id' => User::inRandomOrder()->first()->id,
             'category_id' => Category::inRandomOrder()->first()->id,
             'fournisseur_id' => Fournisseur::inRandomOrder()->first()->id,
+            'stock_alert_threshold' => 10,
             'created_at' => now(),
             'updated_at' => now(),
         ];

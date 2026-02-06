@@ -8,7 +8,7 @@ use App\Models\Fournisseur;
 class Product extends Model
 {
     use HasFactory;
-    protected $fillable = ['title', 'description', 'price', 'quantity', 'image', 'user_id', 'category_id', 'fournisseur_id'];
+    protected $fillable = ['title', 'description', 'price', 'quantity', 'image', 'user_id', 'stock_alert_threshold' , 'category_id', 'fournisseur_id'];
 
     public function user()
     {
