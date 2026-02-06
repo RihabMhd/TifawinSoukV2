@@ -4,7 +4,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use app\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\OrderController;
 use PHPUnit\Metadata\Group;
 require __DIR__.'/auth.php';
 
@@ -33,11 +33,15 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::delete('/admin/products/{id}', [ProductController::class, 'destroy'])->name('admin.products.destroy');
 });
 
+//Admin Orders & dashboard
 //Admin Orders
 Route::middleware(['auth', 'admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
+
+        // Admin main dashboard
+
 
         Route::get('/orders/dashboard', [OrderController::class, 'dashboard'])
             ->name('orders.dashboard');
@@ -54,3 +58,8 @@ Route::middleware(['auth', 'admin'])
         Route::delete('/orders/{order}', [OrderController::class, 'cancel'])
             ->name('orders.cancel');
     });
+
+
+  Route::get('/dashboard', function () {
+            return view('admin.dashboard');
+        })->name('dashboard');
