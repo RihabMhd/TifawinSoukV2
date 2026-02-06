@@ -70,12 +70,17 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
 
 require __DIR__ . '/auth.php';
+//Admin Orders & dashboard
 //Admin Orders
 Route::middleware(['auth', 'admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
-        Route::get('/orders/dashboard', [AdminOrderController::class, 'dashboard'])
+
+        // Admin main dashboard
+
+
+        Route::get('/orders/dashboard', [OrderController::class, 'dashboard'])
             ->name('orders.dashboard');
 
         Route::get('/orders', [AdminOrderController::class, 'index'])
@@ -90,3 +95,8 @@ Route::middleware(['auth', 'admin'])
         Route::delete('/orders/{order}', [AdminOrderController::class, 'cancel'])
             ->name('orders.cancel');
     });
+
+
+  Route::get('/dashboard', function () {
+            return view('admin.dashboard');
+        })->name('dashboard');

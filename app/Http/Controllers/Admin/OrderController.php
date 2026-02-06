@@ -53,7 +53,7 @@ class OrderController extends Controller
         $chartLabels = $salesLast7Days->pluck('date');
         $chartData   = $salesLast7Days->pluck('total');
 
-        return view('admin.orders.dashboard', compact(
+        return view('admin.dashboard', compact(
             'revenueToday',
             'ordersToday',
             'pendingOrders',
@@ -62,6 +62,9 @@ class OrderController extends Controller
             'chartLabels',
             'chartData'
         ));
-    }
+
+
+
+        }
 
 }
