@@ -18,7 +18,6 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            <!-- Messages de succès/erreur -->
             <?php if(session('success')): ?>
                 <div class="mb-4 px-4 py-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
                     <p class="text-sm text-green-800 dark:text-green-200">
@@ -50,17 +49,15 @@
             <form method="POST" action="<?php echo e(route('checkout.process')); ?>" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <?php echo csrf_field(); ?>
 
-                <!-- Formulaire de commande -->
                 <div class="lg:col-span-2 space-y-6">
 
-                    <!-- Informations de livraison -->
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
                             Informations de livraison
                         </h3>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <!-- Prénom -->
+                          
                             <div>
                                 <label for="first_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     Prénom <span class="text-red-500">*</span>
@@ -73,7 +70,7 @@
                                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
                             </div>
 
-                            <!-- Nom -->
+                          
                             <div>
                                 <label for="last_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     Nom <span class="text-red-500">*</span>
@@ -86,7 +83,7 @@
                                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
                             </div>
 
-                            <!-- Email -->
+                            
                             <div class="md:col-span-2">
                                 <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     Email <span class="text-red-500">*</span>
@@ -99,7 +96,7 @@
                                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
                             </div>
 
-                            <!-- Téléphone -->
+                           
                             <div class="md:col-span-2">
                                 <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     Téléphone <span class="text-red-500">*</span>
@@ -112,7 +109,6 @@
                                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
                             </div>
 
-                            <!-- Adresse -->
                             <div class="md:col-span-2">
                                 <label for="address" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     Adresse <span class="text-red-500">*</span>
@@ -126,7 +122,7 @@
                                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
                             </div>
 
-                            <!-- Complément d'adresse -->
+                            
                             <div class="md:col-span-2">
                                 <label for="address_complement" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     Complément d'adresse
@@ -139,7 +135,7 @@
                                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
                             </div>
 
-                            <!-- Code postal -->
+                            
                             <div>
                                 <label for="postal_code" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     Code postal <span class="text-red-500">*</span>
@@ -152,7 +148,7 @@
                                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
                             </div>
 
-                            <!-- Ville -->
+                           
                             <div>
                                 <label for="city" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     Ville <span class="text-red-500">*</span>
@@ -165,7 +161,7 @@
                                        class="w-full border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
                             </div>
 
-                            <!-- Pays -->
+                            
                             <div class="md:col-span-2">
                                 <label for="country" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     Pays <span class="text-red-500">*</span>
@@ -186,14 +182,14 @@
                         </div>
                     </div>
 
-                    <!-- Méthode de paiement -->
+                    
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
                             Méthode de paiement
                         </h3>
 
                         <div class="space-y-3">
-                            <!-- Carte bancaire -->
+                           
                             <label class="flex items-center p-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:border-blue-500 dark:hover:border-blue-500 transition">
                                 <input type="radio" 
                                        name="payment_method" 
@@ -208,7 +204,6 @@
                                 </div>
                             </label>
 
-                            <!-- PayPal -->
                             <label class="flex items-center p-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:border-blue-500 dark:hover:border-blue-500 transition">
                                 <input type="radio" 
                                        name="payment_method" 
@@ -223,7 +218,7 @@
                                 </div>
                             </label>
 
-                            <!-- Paiement à la livraison -->
+                            
                             <label class="flex items-center p-4 border-2 border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:border-blue-500 dark:hover:border-blue-500 transition">
                                 <input type="radio" 
                                        name="payment_method" 
@@ -239,7 +234,7 @@
                         </div>
                     </div>
 
-                    <!-- Notes de commande -->
+                    
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
                             Notes de commande (optionnel)
@@ -254,14 +249,14 @@
 
                 </div>
 
-                <!-- Résumé de la commande -->
+                
                 <div class="lg:col-span-1">
                     <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6 sticky top-24">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
                             Résumé de la commande
                         </h3>
 
-                        <!-- Liste des produits -->
+                       
                         <div class="space-y-3 mb-4 max-h-64 overflow-y-auto">
                             <?php $__currentLoopData = $cart->items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <div class="flex items-center gap-3 pb-3 border-b dark:border-gray-700">
@@ -296,7 +291,7 @@
                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </div>
 
-                        <!-- Totaux -->
+                   
                         <div class="space-y-2 mb-4">
                             <div class="flex justify-between text-sm text-gray-700 dark:text-gray-300">
                                 <span>Sous-total</span>
@@ -321,7 +316,7 @@
                             <span>$<?php echo e(number_format($cart->getTotal() * 1.20, 2)); ?></span>
                         </div>
 
-                        <!-- Conditions générales -->
+                       
                         <div class="mb-4">
                             <label class="flex items-start">
                                 <input type="checkbox" 
@@ -334,7 +329,7 @@
                             </label>
                         </div>
 
-                        <!-- Bouton de validation -->
+                      
                         <button type="submit"
                                 class="w-full px-4 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 font-semibold transition duration-200">
                             Confirmer la commande
