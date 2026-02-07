@@ -93,12 +93,46 @@ Route::middleware(['auth', 'admin'])
 
         Route::delete('/orders/{order}', [AdminOrderController::class, 'cancel'])
             ->name('orders.cancel');
+        Route::get('/stock/dashboard', [StockController::class, 'dashboard'])->name('admin.stock.dashboard');
+        Route::get('/dashboard', [AdminOrderController::class, 'dashboard'])->name('dashboard');
     });
 
 
     // ================================== stocks ======================
+use App\Models\Cart;
 
-    Route::get('/admin/stock/dashboard',[StockController::class,'dashboard'])->name('admin.stock.dashboard');
-    Route::get('/dashboard', [AdminOrderController::class, 'dashboard'])->name('dashboard');
-
-
+Route::get('/debug-cart', function () {
+    $output = [];
+    
+    $output[] = "=== CURRENT SESSION INFO ===";
+    $output[] = "Session ID: " . session()->getId();
+    $output[] = "Authenticated: " . (auth()->check() ? 'YES' : 'NO');
+    if (auth()->check()) {
+        $output[] = "User ID: " . auth()->id();
+        $output[] = "User Email: " . auth()->user()->email;
+        $output[] = "User Role ID: " . auth()->user()->role_id;
+    }
+    $output[] = "";
+    
+    $output[] = "=== ALL CARTS IN DATABASE ===";
+    $carts = Cart::with('items')->get();
+    $output[] = "Total carts: " . $carts->count();
+    $output[] = "";
+    
+    foreach ($carts as $cart) {
+        $output[] = "Cart ID: " . $cart->id;
+        $output[] = "  User ID: " . ($cart->user_id ?? 'NULL');
+        $output[] = "  Session ID: " . ($cart->session_id ?? 'NULL');
+        $output[] = "  Items count: " . $cart->items->count();
+        
+        if ($cart->items->count() > 0) {
+            $output[] = "  Items:";
+            foreach ($cart->items as $item) {
+                $output[] = "    - Product ID: " . $item->product_id . ", Qty: " . $item->quantity;
+            }
+        }
+        $output[] = "";
+    }
+    
+    return '<pre>' . implode("\n", $output) . '</pre>';
+});

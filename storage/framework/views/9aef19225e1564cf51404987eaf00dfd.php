@@ -17,14 +17,22 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+            <!-- Welcome Section -->
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <?php echo e(__("You're logged in!")); ?>
-
+                    <h3 class="text-2xl font-bold mb-2">Welcome back, <?php echo e(Auth::user()->name); ?>!</h3>
+                    <p class="text-gray-600 dark:text-gray-400">Here's what's happening with your account today.</p>
                 </div>
             </div>
+
+
+
+
         </div>
+
+
     </div>
+    
  <?php echo $__env->renderComponent(); ?>
 <?php endif; ?>
 <?php if (isset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>

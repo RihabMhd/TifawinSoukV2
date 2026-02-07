@@ -6,8 +6,48 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('products.index') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
-                    </a>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <rect width="9" height="9" x="1.5" y="1.5" fill="#fff" rx="1">
+                                <animate id="SVGvBHXGeBR" attributeName="x" begin="0;SVGBBjjneux.end+0.15s"
+                                    dur="0.6s" keyTimes="0;.2;1" values="1.5;.5;1.5" />
+                                <animate attributeName="y" begin="0;SVGBBjjneux.end+0.15s" dur="0.6s"
+                                    keyTimes="0;.2;1" values="1.5;.5;1.5" />
+                                <animate attributeName="width" begin="0;SVGBBjjneux.end+0.15s" dur="0.6s"
+                                    keyTimes="0;.2;1" values="9;11;9" />
+                                <animate attributeName="height" begin="0;SVGBBjjneux.end+0.15s" dur="0.6s"
+                                    keyTimes="0;.2;1" values="9;11;9" />
+                            </rect>
+                            <rect width="9" height="9" x="13.5" y="1.5" fill="#fff" rx="1">
+                                <animate attributeName="x" begin="SVGvBHXGeBR.begin+0.15s" dur="0.6s"
+                                    keyTimes="0;.2;1" values="13.5;12.5;13.5" />
+                                <animate attributeName="y" begin="SVGvBHXGeBR.begin+0.15s" dur="0.6s"
+                                    keyTimes="0;.2;1" values="1.5;.5;1.5" />
+                                <animate attributeName="width" begin="SVGvBHXGeBR.begin+0.15s" dur="0.6s"
+                                    keyTimes="0;.2;1" values="9;11;9" />
+                                <animate attributeName="height" begin="SVGvBHXGeBR.begin+0.15s" dur="0.6s"
+                                    keyTimes="0;.2;1" values="9;11;9" />
+                            </rect>
+                            <rect width="9" height="9" x="13.5" y="13.5" fill="#fff" rx="1">
+                                <animate attributeName="x" begin="SVGvBHXGeBR.begin+0.3s" dur="0.6s"
+                                    keyTimes="0;.2;1" values="13.5;12.5;13.5" />
+                                <animate attributeName="y" begin="SVGvBHXGeBR.begin+0.3s" dur="0.6s"
+                                    keyTimes="0;.2;1" values="13.5;12.5;13.5" />
+                                <animate attributeName="width" begin="SVGvBHXGeBR.begin+0.3s" dur="0.6s"
+                                    keyTimes="0;.2;1" values="9;11;9" />
+                                <animate attributeName="height" begin="SVGvBHXGeBR.begin+0.3s" dur="0.6s"
+                                    keyTimes="0;.2;1" values="9;11;9" />
+                            </rect>
+                            <rect width="9" height="9" x="1.5" y="13.5" fill="#fff" rx="1">
+                                <animate id="SVGBBjjneux" attributeName="x" begin="SVGvBHXGeBR.begin+0.45s"
+                                    dur="0.6s" keyTimes="0;.2;1" values="1.5;.5;1.5" />
+                                <animate attributeName="y" begin="SVGvBHXGeBR.begin+0.45s" dur="0.6s"
+                                    keyTimes="0;.2;1" values="13.5;12.5;13.5" />
+                                <animate attributeName="width" begin="SVGvBHXGeBR.begin+0.45s" dur="0.6s"
+                                    keyTimes="0;.2;1" values="9;11;9" />
+                                <animate attributeName="height" begin="SVGvBHXGeBR.begin+0.45s" dur="0.6s"
+                                    keyTimes="0;.2;1" values="9;11;9" />
+                            </rect>
+                        </svg>
                 </div>
 
                 <!-- Navigation Links -->
@@ -32,7 +72,7 @@
                                 {{ __('Fournisseurs') }}
                             </x-nav-link>
 
-                             <x-nav-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.*')">
+                            <x-nav-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.*')">
                                 {{ __('Orders') }}
                             </x-nav-link>
                         @endif
@@ -41,13 +81,13 @@
                 </div>
             </div>
 
-           
+
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 @if (!auth()->check() || !auth()->user()->isAdmin())
                     <x-nav-link :href="route('cart.index')" :active="request()->routeIs('cart.*')">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                stroke-width="1.5"
+                            <path fill="none" stroke="currentColor" stroke-linecap="round"
+                                stroke-linejoin="round" stroke-width="1.5"
                                 d="M10.5 10h4m-2-2v4m4 9a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3m-8 0a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3M3.71 5.4h15.214c1.378 0 2.373 1.27 1.995 2.548l-1.654 5.6C19.01 14.408 18.196 15 17.27 15H8.112c-.927 0-1.742-.593-1.996-1.452zm0 0L3 3" />
                         </svg>
                         @php
