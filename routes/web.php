@@ -93,12 +93,6 @@ Route::middleware(['auth', 'admin'])
 
         Route::delete('/orders/{order}', [AdminOrderController::class, 'cancel'])
             ->name('orders.cancel');
+        Route::get('/stock/dashboard', [StockController::class, 'dashboard'])->name('admin.stock.dashboard');
+        Route::get('/dashboard', [AdminOrderController::class, 'dashboard'])->name('dashboard');
     });
-
-
-    // ================================== stocks ======================
-
-    Route::get('/admin/stock/dashboard',[StockController::class,'dashboard'])->name('admin.stock.dashboard');
-    Route::get('/dashboard', [AdminOrderController::class, 'dashboard'])->name('dashboard');
-
-

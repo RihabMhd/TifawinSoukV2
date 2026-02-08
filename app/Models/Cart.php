@@ -50,41 +50,45 @@ class Cart extends Model
     }
 
     // merge the session cart into the user database cart after login
-    public static function mergeSessionToDatabase($user)
+    public static function mergeSessionToDatabase($user, $oldSessionId = null)
     {
+        
+        // Only merge for customers (role_id = 3)
         if ($user->role_id != 3) {
             return;
         }
 
+        // use the provided old session ID, or fall back to current session ID
+        $sessionId = $oldSessionId ?? session()->getId();
+
         // get the current session cart along with its items and products
-        $sessionCart = self::where('session_id', session()->getId())
+        $sessionCart = self::where('session_id', $sessionId)
             ->with('items.product')
             ->first();
-
-
+        
         if (!$sessionCart || $sessionCart->items->isEmpty()) {
             return;
         }
 
-        // get or create the user s database cart
+        // get or create the user's database cart
         $userCart = self::firstOrCreate([
             'user_id' => $user->id
         ]);
 
         // loop through each item in the session cart
         foreach ($sessionCart->items as $sessionItem) {
-            // check if the product already exists in the user s cart
+            // check if the product already exists in the user's cart
             $existingItem = $userCart->items()
                 ->where('product_id', $sessionItem->product_id)
                 ->first();
 
             if ($existingItem) {
-                // if it exists  increase the quantity
+                // if it exists, increase the quantity
                 $existingItem->update([
                     'quantity' => $existingItem->quantity + $sessionItem->quantity
                 ]);
             } else {
-                // if not create a new cart item
+                // if not, create a new cart item
                 CartItem::create([
                     'cart_id' => $userCart->id,
                     'product_id' => $sessionItem->product_id,
@@ -94,6 +98,7 @@ class Cart extends Model
             }
         }
 
+        // Clean up the session cart after merging
         $sessionCart->items()->delete();
         $sessionCart->delete();
     }
