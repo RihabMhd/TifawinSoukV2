@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Cart;
+use Srmklive\PayPal\Services\PayPal as PayPalClient;
 
 class CheckoutController extends Controller
 {
@@ -16,7 +17,6 @@ class CheckoutController extends Controller
     {
         $cart = Cart::getOrCreate();
 
-        // redirect if cart is vide
         if (!$cart || $cart->items->isEmpty()) {
             return redirect()->route('cart.index')
                 ->with('error', 'Votre panier est vide.');
@@ -53,13 +53,11 @@ class CheckoutController extends Controller
         }
 
         try {
-            // create the order
+            // Create the order
             $order = Order::create([
                 'user_id' => auth()->id(),
                 'order_number' => $this->generateOrderNumber(),
                 'status' => 'pending',
-
-                // shipping information
                 'first_name' => $validated['first_name'],
                 'last_name' => $validated['last_name'],
                 'email' => $validated['email'],
@@ -69,19 +67,14 @@ class CheckoutController extends Controller
                 'postal_code' => $validated['postal_code'],
                 'city' => $validated['city'],
                 'country' => $validated['country'],
-
-                // payment and totals
                 'payment_method' => $validated['payment_method'],
                 'subtotal' => $cart->getTotal(),
-                'tax' => $cart->getTotal() * 0.20, 
+                'tax' => $cart->getTotal() * 0.20,
                 'total' => $cart->getTotal() * 1.20,
-
                 'order_notes' => $validated['order_notes'] ?? null,
             ]);
 
-            // create order items from cart items
             foreach ($cart->items as $cartItem) {
-
                 if ($cartItem->product->quantity < $cartItem->quantity) {
                     return redirect()->back()->with('error', "Stock insuffisant pour {$cartItem->product->title}");
                 }
@@ -92,10 +85,16 @@ class CheckoutController extends Controller
                     'price' => $cartItem->price_at_addition,
                     'subtotal' => $cartItem->getSubtotal(),
                 ]);
-                
+
                 $cartItem->product->decrement('quantity', $cartItem->quantity);
             }
 
+            // handle PayPal vs Other methods
+            if ($validated['payment_method'] === 'paypal') {
+                return $this->payWithPaypal($order);
+            }
+
+            // finalize for non-PayPal (e.g. Cash on delivery)
             $cart->items()->delete();
 
             return redirect()->route('orders.show', $order)
@@ -103,13 +102,75 @@ class CheckoutController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Une erreur est survenue lors de la création de votre commande. Veuillez réessayer.');
+                ->with('error', 'Une erreur est survenue lors de la création de votre commande.');
         }
     }
 
-    /**
-     * Generate a unique order number
-     */
+    private function payWithPaypal(Order $order)
+    {
+        $provider = new PayPalClient;
+        $provider->setApiCredentials(config('paypal'));
+        $provider->getAccessToken();
+
+        $response = $provider->createOrder([
+            "intent" => "CAPTURE",
+            "application_context" => [
+                "return_url" => route('paypal.success', ['order' => $order->id]),
+                "cancel_url" => route('paypal.cancel', ['order' => $order->id]),
+            ],
+            "purchase_units" => [
+                0 => [
+                    "reference_id" => $order->order_number,
+                    "amount" => [
+                        "currency_code" => "USD",
+                        "value" => number_format($order->total, 2, '.', '')
+                    ]
+                ]
+            ]
+        ]);
+
+        if (isset($response['id']) && $response['id'] != null) {
+            foreach ($response['links'] as $links) {
+                if ($links['rel'] == 'approve') {
+                    return redirect()->away($links['href']);
+                }
+            }
+        }
+
+        return redirect()->route('checkout.index')->with('error', 'Erreur de connexion avec PayPal.');
+    }
+
+    public function paypalSuccess(Request $request, Order $order)
+    {
+        $provider = new PayPalClient;
+        $provider->setApiCredentials(config('paypal'));
+        $provider->getAccessToken();
+
+        $response = $provider->capturePaymentOrder($request['token']);
+
+        if (isset($response['status']) && $response['status'] == 'COMPLETED') {
+            // update payment_status instead of status to avoid truncation error
+            $order->update([
+                'payment_status' => 'paid',
+                'status' => 'processing' // move from pending to processing
+            ]);
+
+            $cart = Cart::getOrCreate();
+            $cart->items()->delete();
+
+            return redirect()->route('orders.show', $order)
+                ->with('success', 'Paiement PayPal réussi !');
+        }
+
+        return redirect()->route('checkout.index')->with('error', 'Le paiement n\'a pas pu être validé.');
+    }
+
+    public function paypalCancel(Order $order)
+    {
+        return redirect()->route('checkout.index')
+            ->with('error', 'Vous avez annulé le paiement PayPal. Votre commande est en attente.');
+    }
+
     private function generateOrderNumber()
     {
         return 'ORD-' . strtoupper(uniqid());
