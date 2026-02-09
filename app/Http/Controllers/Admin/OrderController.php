@@ -7,40 +7,82 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
-
 
 class OrderController extends Controller
 {
-    public function index()
-    {
-        $orders = Order::with('user')
-            ->latest()
-            ->paginate(10);
 
-        return view('admin.orders.index', compact('orders'));
+    public function index(Request $request)
+    {
+        $query = Order::with(['user', 'items']);
+
+        // Status filter
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Date range
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        // Client search
+        if ($request->filled('client_search')) {
+            $search = $request->client_search;
+            $query->whereHas('user', function ($q) use ($search) {
+                $q->where('first_name', 'like', "%$search%")
+                  ->orWhere('last_name', 'like', "%$search%")
+                  ->orWhere('email', 'like', "%$search%");
+            });
+        }
+
+        // Amount filter
+        if ($request->filled('amount_min')) {
+            $query->where('total', '>=', $request->amount_min);
+        }
+
+        if ($request->filled('amount_max')) {
+            $query->where('total', '<=', $request->amount_max);
+        }
+
+        // Sorting
+        $allowedSorts = ['created_at', 'total', 'order_number'];
+        $sort = $request->get('sort', 'created_at');
+        $order = $request->get('order', 'desc');
+
+        if (in_array($sort, $allowedSorts)) {
+            $query->orderBy($sort, $order);
+        } else {
+            $query->latest();
+        }
+
+        // Stats
+        $statsQuery = clone $query;
+        $stats = [
+            'total_orders' => $statsQuery->count(),
+            'total_amount' => $statsQuery->sum('total'),
+        ];
+
+        // Pagination
+        $orders = $query->paginate(20);
+
+        return view('admin.orders.index', compact('orders', 'stats'));
     }
 
+    //Dashboard admin
     public function dashboard()
     {
-        // Chiffre d'affaires du jour
-        $revenueToday = Order::whereDate('created_at', today())
-            ->sum('total');
+        $revenueToday = Order::whereDate('created_at', today())->sum('total');
+        $ordersToday = Order::whereDate('created_at', today())->count();
+        $pendingOrders = Order::where('status', 'pending')->count();
 
-        // Commandes du jour
-        $ordersToday = Order::whereDate('created_at', today())
-            ->count();
-
-        // Commandes en attente
-        $pendingOrders = Order::where('status', 'pending')
-            ->count();
-
-        // Commandes du mois
         $ordersThisMonth = Order::whereMonth('created_at', now()->month)
             ->whereYear('created_at', now()->year)
             ->count();
 
-        // Top five products vendus
         $topProducts = OrderItem::join('products', 'order_items.product_id', '=', 'products.id')
             ->select(
                 'products.title as product_name',
@@ -51,7 +93,6 @@ class OrderController extends Controller
             ->limit(5)
             ->get();
 
-        // Ventes 7 derniers jours
         $salesLast7Days = Order::select(
             DB::raw('DATE(created_at) as date'),
             DB::raw('SUM(total) as total')
@@ -62,15 +103,10 @@ class OrderController extends Controller
             ->get();
 
         $chartLabels = $salesLast7Days->pluck('date');
-        $chartData   = $salesLast7Days->pluck('total');
+        $chartData = $salesLast7Days->pluck('total');
 
-        // Commandes récentes (Recent Orders)
-        $recentOrders = Order::with('user')
-            ->latest()
-            ->take(5)
-            ->get();
+        $recentOrders = Order::with('user')->latest()->take(5)->get();
 
-        // Statut des commandes (Chart data)
         $ordersByStatus = Order::select('status', DB::raw('count(*) as count'))
             ->groupBy('status')
             ->get();
@@ -92,14 +128,14 @@ class OrderController extends Controller
         ));
     }
 
+    //Show order
     public function show($id)
     {
-        $order = Order::with(['items.product', 'user'])
-            ->findOrFail($id);
-
+        $order = Order::with(['items.product', 'user'])->findOrFail($id);
         return view('admin.orders.show', compact('order'));
     }
 
+    //Update order
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
@@ -107,85 +143,21 @@ class OrderController extends Controller
         ]);
 
         $order = Order::findOrFail($id);
-        $order->status = $request->input('status');
-        $order->save();
+        $order->update(['status' => $request->status]);
 
-        return redirect()
-            ->route('admin.orders.show', $order->id)
-            ->with('success', 'Statut de la commande mis à jour avec succès');
+        return back()->with('success', 'Statut mis à jour avec succès');
     }
 
+    //Cancel order
     public function cancel($id)
     {
         $order = Order::findOrFail($id);
-        
+
         if ($order->status === 'delivered') {
-            return redirect()
-                ->back()
-                ->with('error', 'Impossible d\'annuler une commande déjà livrée');
-        }
-        public function index(Request $request)
-        {
-         $query = Order::with(['user','items']);
-         if($request->filled('status')){
-            $query->where('status',$request->status);
-         }
-         if ($request->filled('date_from')) {
-            $query->whereDate('created_at', '>=', $request->date_from);
+            return back()->with('error', 'Impossible d\'annuler une commande livrée');
         }
 
-        if ($request->filled('date_to')) {
-            $query->whereDate('created_at', '<=', $request->date_to);
-        }
-
-        if ($request->filled('client_search')) {
-            $searchTerm = $request->client_search;
-            $query->whereHas('user', function ($q) use ($searchTerm) {
-                $q->where('first_name', 'LIKE', '%' . $searchTerm . '%')
-                  ->orWhere('last_name', 'LIKE', '%' . $searchTerm . '%')
-                  ->orWhere('email', 'LIKE', '%' . $searchTerm . '%');
-            });
-        }
-
-        // Filter by Minimum Amount
-
-        if ($request->filled('amount_min')) {
-            $query->where('total', '>=', $request->amount_min);
-        }
-
-        if ($request->filled('amount_max')) {
-            $query->where('total', '<=', $request->amount_max);
-        }
-
-        // Sorting
-        $sortBy = $request->get('sort', 'created_at');
-        $sortOrder = $request->get('order', 'desc');
-
-        // Allowed sort columns validation to prevent errors
-        $allowedSorts = ['created_at', 'total', 'status', 'order_number'];
-        if (in_array($sortBy, $allowedSorts)) {
-            $query->orderBy($sortBy, $sortOrder);
-        } else {
-            $query->latest();
-        }
-
-        // Calculate Statistics
-
-        $statsQuery = clone $query;
-        $stats = [
-            'total_orders' => $statsQuery->count(),
-            'total_amount' => $statsQuery->sum('total')
-        ];
-
-        // Pagination
-        $orders = $query->paginate(20);
-
-        // Return View
-        return view('admin.orders.index', compact('orders', 'stats'));
-        }
-
-        $order->status = 'cancelled';
-        $order->save();
+        $order->update(['status' => 'cancelled']);
 
         return redirect()
             ->route('admin.orders.index')
