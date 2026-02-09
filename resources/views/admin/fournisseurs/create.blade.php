@@ -1,56 +1,79 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Ajouter un fournisseur</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-white text-black">
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            {{ __('Ajouter un fournisseur') }}
+        </h2>
+    </x-slot>
 
-    <div class="w-full flex flex-col items-center p-8">
-        <div class="mb-6">
-            <h1 class="text-2xl font-semibold">
-                Ajouter un fournisseur
-            </h1>
-        </div>
+    <div class="py-12">
+        <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900 dark:text-gray-100">
+                    <form action="{{ route('admin.fournisseurs.store') }}" method="POST" class="space-y-6">
+                        @csrf
+                        
+                        <!-- Nom -->
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Nom
+                            </label>
+                            <input type="text" 
+                                   name="name" 
+                                   id="name"
+                                   value="{{ old('name') }}"
+                                   required
+                                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
+                            @error('name')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
 
-        <div class="max-w-xl border border-gray-200 rounded-lg p-6 ">
-            <form action="{{ route('admin.fournisseurs.store') }}" method="POST" class="space-y-5">
-                @csrf
-                <div>
-                    <label class="block text-sm mb-1">Nom</label>
-                    <input type="text" name="name"
-                           class="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-black">
+                        <!-- Email -->
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Email
+                            </label>
+                            <input type="email" 
+                                   name="email" 
+                                   id="email"
+                                   value="{{ old('email') }}"
+                                   required
+                                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
+                            @error('email')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Téléphone -->
+                        <div>
+                            <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Téléphone
+                            </label>
+                            <input type="text" 
+                                   name="phone" 
+                                   id="phone"
+                                   value="{{ old('phone') }}"
+                                   required
+                                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
+                            @error('phone')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="flex items-center justify-end space-x-3 pt-4">
+                            <a href="{{ route('admin.fournisseurs.index') }}"
+                               class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-25 transition ease-in-out duration-150">
+                                Annuler
+                            </a>
+                            <button type="submit"
+                                    class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+                                Enregistrer
+                            </button>
+                        </div>
+                    </form>
                 </div>
-
-                
-                <div>
-                    <label class="block text-sm mb-1">Email</label>
-                    <input type="email" name="email"
-                           class="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-black">
-                </div>
-
-                <div>
-                    <label class="block text-sm mb-1">Téléphone</label>
-                    <input type="text" name="phone"
-                           class="w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-1 focus:ring-black">
-                </div>
-
-                <div class="flex items-center gap-3 pt-4">
-                    
-                    <a href="/admin/fournisseurs"
-                    class="px-4 py-2 border border-black rounded hover:bg-black hover:text-white transition">
-                    Annuler
-                </a>
-                <button type="submit"
-                        class="px-4 py-2 bg-black text-white rounded hover:bg-gray-900 transition">
-                    Enregistrer
-                </button>
-                </div>
-
-            </form>
+            </div>
         </div>
     </div>
-
-</body>
-</html>
+</x-app-layout>

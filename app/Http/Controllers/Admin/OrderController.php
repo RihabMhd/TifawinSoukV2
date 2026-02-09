@@ -5,26 +5,33 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderItem;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 
 class OrderController extends Controller
 {
+    public function index()
+    {
+        $orders = Order::with('user')
+            ->latest()
+            ->paginate(10);
+
+        return view('admin.orders.index', compact('orders'));
+    }
+
     public function dashboard()
     {
-        // chiffre daffaires du jour
-        //where with dates created_at, updated....
+        // Chiffre d'affaires du jour
         $revenueToday = Order::whereDate('created_at', today())
             ->sum('total');
-            // dd($revenueToday);
 
-        //  Commandes du jour
+        // Commandes du jour
         $ordersToday = Order::whereDate('created_at', today())
             ->count();
 
-        //  Commandes en attente
-        //where with colones
+        // Commandes en attente
         $pendingOrders = Order::where('status', 'pending')
             ->count();
 
@@ -39,16 +46,16 @@ class OrderController extends Controller
                 'products.title as product_name',
                 DB::raw('SUM(order_items.quantity) as total_sold')
             )
-            ->groupBy('products.title')
+            ->groupBy('products.id', 'products.title')
             ->orderByDesc('total_sold')
             ->limit(5)
             ->get();
 
-        // Ventes 7 derniere jours
+        // Ventes 7 derniers jours
         $salesLast7Days = Order::select(
-                DB::raw('DATE(created_at) as date'),
-                DB::raw('SUM(total) as total')
-            )
+            DB::raw('DATE(created_at) as date'),
+            DB::raw('SUM(total) as total')
+        )
             ->whereDate('created_at', '>=', now()->subDays(6))
             ->groupBy('date')
             ->orderBy('date')
@@ -57,8 +64,9 @@ class OrderController extends Controller
         $chartLabels = $salesLast7Days->pluck('date');
         $chartData   = $salesLast7Days->pluck('total');
 
-        // Commandes récentes (Recents Orders)
-        $recentOrders = Order::latest()
+        // Commandes récentes (Recent Orders)
+        $recentOrders = Order::with('user')
+            ->latest()
             ->take(5)
             ->get();
 
@@ -69,6 +77,7 @@ class OrderController extends Controller
 
         $statusLabels = $ordersByStatus->pluck('status');
         $statusData = $ordersByStatus->pluck('count');
+
         return view('admin.dashboard', compact(
             'revenueToday',
             'ordersToday',
@@ -81,9 +90,39 @@ class OrderController extends Controller
             'statusLabels',
             'statusData'
         ));
+    }
 
+    public function show($id)
+    {
+        $order = Order::with(['items.product', 'user'])
+            ->findOrFail($id);
 
+        return view('admin.orders.show', compact('order'));
+    }
 
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:pending,processing,shipped,delivered,cancelled'
+        ]);
+
+        $order = Order::findOrFail($id);
+        $order->status = $request->input('status');
+        $order->save();
+
+        return redirect()
+            ->route('admin.orders.show', $order->id)
+            ->with('success', 'Statut de la commande mis à jour avec succès');
+    }
+
+    public function cancel($id)
+    {
+        $order = Order::findOrFail($id);
+        
+        if ($order->status === 'delivered') {
+            return redirect()
+                ->back()
+                ->with('error', 'Impossible d\'annuler une commande déjà livrée');
         }
         public function index(Request $request)
         {
@@ -145,4 +184,11 @@ class OrderController extends Controller
         return view('admin.orders.index', compact('orders', 'stats'));
         }
 
+        $order->status = 'cancelled';
+        $order->save();
+
+        return redirect()
+            ->route('admin.orders.index')
+            ->with('success', 'Commande annulée avec succès');
+    }
 }

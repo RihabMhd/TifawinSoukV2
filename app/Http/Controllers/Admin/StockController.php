@@ -7,10 +7,17 @@ use App\Models\Product;
 use App\Models\StockMovement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Termwind\Components\Raw;
 
 
 class StockController extends Controller
 {
+    public function dashboard(){
+        $product_rupture = Product::where('quantity',0)->get();
+        $product_stock_critique = Product::where('quantity', '>',0)->whereColumn('quantity','<','stock_alert_threshold')->get();
+        $product_valeur_inventaire = Product::sum(DB::raw('quantity * price'));
+        return view('admin.stocks.dashboard',compact('product_rupture','product_stock_critique','product_valeur_inventaire'));
+    } 
     public function adjust(Request $request, Product $product)
     {
         $data = $request->validate([
@@ -30,6 +37,11 @@ class StockController extends Controller
                 'reason' => $data['reason']
             ]);
         });
+
+        dd(response()->json([
+            'success' => true,
+            'new_stock' => $product->quantity
+        ]));
 
     }
 }
