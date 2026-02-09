@@ -74,20 +74,59 @@
                             @endif
                         </div>
 
-                        {{-- Price --}}
+                        {{-- Price and Quantity Row --}}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            {{-- Price --}}
+                            <div>
+                                <label for="price" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Price ($) <span class="text-red-500">*</span>
+                                </label>
+                                <input type="number" 
+                                       id="price" 
+                                       name="price" 
+                                       value="{{ old('price') }}"
+                                       step="0.01"
+                                       min="0"
+                                       class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600"
+                                       required>
+                                @error('price')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            {{-- Quantity --}}
+                            <div>
+                                <label for="quantity" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Quantity in Stock <span class="text-red-500">*</span>
+                                </label>
+                                <input type="number" 
+                                       id="quantity" 
+                                       name="quantity" 
+                                       value="{{ old('quantity', 0) }}"
+                                       min="0"
+                                       class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600"
+                                       required>
+                                @error('quantity')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+
+                        {{-- Stock Alert Threshold --}}
                         <div class="mb-6">
-                            <label for="price" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Price ($) <span class="text-red-500">*</span>
+                            <label for="stock_alert_threshold" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Stock Alert Threshold
                             </label>
                             <input type="number" 
-                                   id="price" 
-                                   name="price" 
-                                   value="{{ old('price') }}"
-                                   step="0.01"
+                                   id="stock_alert_threshold" 
+                                   name="stock_alert_threshold" 
+                                   value="{{ old('stock_alert_threshold', 10) }}"
                                    min="0"
-                                   class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600"
-                                   required>
-                            @error('price')
+                                   class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                You'll receive an alert when stock falls below this number
+                            </p>
+                            @error('stock_alert_threshold')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
