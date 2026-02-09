@@ -13,6 +13,7 @@
                         @csrf
                         @method('PUT')
 
+                        {{-- Product Title --}}
                         <div class="mb-6">
                             <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Product Title <span class="text-red-500">*</span>
@@ -28,7 +29,7 @@
                             @enderror
                         </div>
 
-                      
+                        {{-- Category --}}
                         <div class="mb-6">
                             <label for="category_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Category <span class="text-red-500">*</span>
@@ -49,25 +50,89 @@
                             @enderror
                         </div>
 
-                       
+                        {{-- Fournisseur (Supplier) --}}
                         <div class="mb-6">
-                            <label for="price" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Price ($) <span class="text-red-500">*</span>
+                            <label for="fournisseur_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Supplier
+                            </label>
+                            <select id="fournisseur_id" 
+                                    name="fournisseur_id"
+                                    class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
+                                <option value="">No supplier</option>
+                                @foreach($fournisseurs as $fournisseur)
+                                <option value="{{ $fournisseur->id }}" {{ old('fournisseur_id', $product->fournisseur_id) == $fournisseur->id ? 'selected' : '' }}>
+                                    {{ $fournisseur->name }} - {{ $fournisseur->email }}
+                                </option>
+                                @endforeach
+                            </select>
+                            @error('fournisseur_id')
+                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                            @enderror
+                            @if($fournisseurs->isEmpty())
+                                <p class="mt-1 text-xs text-yellow-600 dark:text-yellow-400">
+                                    No suppliers available. <a href="{{ route('admin.fournisseurs.create') }}" class="underline">Create one</a>
+                                </p>
+                            @endif
+                        </div>
+
+                        {{-- Price and Quantity Row --}}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            {{-- Price --}}
+                            <div>
+                                <label for="price" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Price ($) <span class="text-red-500">*</span>
+                                </label>
+                                <input type="number" 
+                                       id="price" 
+                                       name="price" 
+                                       value="{{ old('price', $product->price) }}"
+                                       step="0.01"
+                                       min="0"
+                                       class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600"
+                                       required>
+                                @error('price')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            {{-- Quantity --}}
+                            <div>
+                                <label for="quantity" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                    Quantity in Stock <span class="text-red-500">*</span>
+                                </label>
+                                <input type="number" 
+                                       id="quantity" 
+                                       name="quantity" 
+                                       value="{{ old('quantity', $product->quantity) }}"
+                                       min="0"
+                                       class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600"
+                                       required>
+                                @error('quantity')
+                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+
+                        {{-- Stock Alert Threshold --}}
+                        <div class="mb-6">
+                            <label for="stock_alert_threshold" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                Stock Alert Threshold
                             </label>
                             <input type="number" 
-                                   id="price" 
-                                   name="price" 
-                                   value="{{ old('price', $product->price) }}"
-                                   step="0.01"
+                                   id="stock_alert_threshold" 
+                                   name="stock_alert_threshold" 
+                                   value="{{ old('stock_alert_threshold', $product->stock_alert_threshold ?? 10) }}"
                                    min="0"
-                                   class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600"
-                                   required>
-                            @error('price')
+                                   class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                You'll receive an alert when stock falls below this number
+                            </p>
+                            @error('stock_alert_threshold')
                             <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
 
-                       
+                        {{-- Description --}}
                         <div class="mb-6">
                             <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Description
@@ -81,7 +146,7 @@
                             @enderror
                         </div>
 
-                      
+                        {{-- Current Image Preview --}}
                         @if($product->image)
                         <div class="mb-6">
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -95,7 +160,7 @@
                         </div>
                         @endif
 
-                      
+                        {{-- Image Upload --}}
                         <div class="mb-6">
                             <label for="image" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 {{ $product->image ? 'Change Image' : 'Product Image' }}
@@ -123,7 +188,7 @@
                             @enderror
                         </div>
 
-                     
+                        {{-- Buttons --}}
                         <div class="flex items-center gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                             <button type="submit" 
                                     class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">

@@ -27,7 +27,6 @@ class ProductController extends Controller
 
         $products = $query->latest()->paginate(12)->withQueryString();
 
-        // Check if admin - show table view, otherwise show card view
         if (auth()->check() && auth()->user()->isAdmin()) {
             return view('admin.products.index', compact('products', 'categories'));
         }
@@ -54,6 +53,8 @@ class ProductController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:2000',
             'price' => 'required|numeric|min:0|max:999999.99',
+            'quantity' => 'required|integer|min:0',
+            'stock_alert_threshold' => 'nullable|integer|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'category_id' => 'required|exists:categories,id',
             'fournisseur_id' => 'nullable|exists:fournisseurs,id'
@@ -101,6 +102,8 @@ class ProductController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:2000',
             'price' => 'required|numeric|min:0|max:999999.99',
+            'quantity' => 'required|integer|min:0',
+            'stock_alert_threshold' => 'nullable|integer|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'category_id' => 'required|exists:categories,id',
             'fournisseur_id' => 'nullable|exists:fournisseurs,id'
