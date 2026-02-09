@@ -42,28 +42,24 @@ class Order extends Model
         'delivered_at' => 'datetime',
     ];
 
-    /**
-     * Get the user that owns the order
-     */
+
+
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Get the order items
-     */
+   
+   
     public function items()
     {
         return $this->hasMany(OrderItem::class);
     }
 
-    /**
-     * Get the status badge color
-     */
+   
     public function getStatusColorAttribute()
     {
-        return match($this->status) {
+        return match ($this->status) {
             'pending' => 'yellow',
             'processing' => 'blue',
             'shipped' => 'purple',
@@ -73,12 +69,10 @@ class Order extends Model
         };
     }
 
-    /**
-     * Get the status label
-     */
+ 
     public function getStatusLabelAttribute()
     {
-        return match($this->status) {
+        return match ($this->status) {
             'pending' => 'En attente',
             'processing' => 'En traitement',
             'shipped' => 'Expédiée',
@@ -88,16 +82,18 @@ class Order extends Model
         };
     }
 
-    /**
-     * Get the payment method label
-     */
     public function getPaymentMethodLabelAttribute()
     {
-        return match($this->payment_method) {
+        return match ($this->payment_method) {
             'credit_card' => 'Carte bancaire',
             'paypal' => 'PayPal',
             'cash_on_delivery' => 'Paiement à la livraison',
             default => 'Autre',
         };
+    }
+
+    public function canBeCancelled(): bool
+    {
+        return in_array($this->status, ['pending', 'processing']);
     }
 }
