@@ -48,6 +48,7 @@
                                     keyTimes="0;.2;1" values="9;11;9" />
                             </rect>
                         </svg>
+                    </a>
                 </div>
 
                 <!-- Navigation Links -->
@@ -74,6 +75,10 @@
 
                             <x-nav-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.*')">
                                 {{ __('Orders') }}
+                            </x-nav-link>
+
+                            <x-nav-link :href="route('admin.stock.dashboard')" :active="request()->routeIs('admin.stock.*')">
+                                {{ __('Stock') }}
                             </x-nav-link>
                         @endif
                     @endauth
@@ -206,6 +211,10 @@
 
                     <x-responsive-nav-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.*')">
                         {{ __('Orders') }}
+                    </x-responsive-nav-link>
+
+                    <x-responsive-nav-link :href="route('admin.stock.dashboard')" :active="request()->routeIs('admin.stock.*')">
+                        {{ __('Stock') }}
                     </x-responsive-nav-link>
                 @endif
             @endauth
