@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Support\Facades\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderItem;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+
 
 class OrderController extends Controller
 {
@@ -19,18 +21,17 @@ class OrderController extends Controller
         return view('admin.orders.index', compact('orders'));
     }
 
-
     public function dashboard()
     {
-        // chiffre daffaires du jour
+        // Chiffre d'affaires du jour
         $revenueToday = Order::whereDate('created_at', today())
             ->sum('total');
 
-        //  Commandes du jour
+        // Commandes du jour
         $ordersToday = Order::whereDate('created_at', today())
             ->count();
 
-        //  Commandes en attente
+        // Commandes en attente
         $pendingOrders = Order::where('status', 'pending')
             ->count();
 
@@ -45,12 +46,12 @@ class OrderController extends Controller
                 'products.title as product_name',
                 DB::raw('SUM(order_items.quantity) as total_sold')
             )
-            ->groupBy('products.title')
+            ->groupBy('products.id', 'products.title')
             ->orderByDesc('total_sold')
             ->limit(5)
             ->get();
 
-        // Ventes 7 derniere jours
+        // Ventes 7 derniers jours
         $salesLast7Days = Order::select(
             DB::raw('DATE(created_at) as date'),
             DB::raw('SUM(total) as total')
@@ -63,8 +64,9 @@ class OrderController extends Controller
         $chartLabels = $salesLast7Days->pluck('date');
         $chartData   = $salesLast7Days->pluck('total');
 
-        // Commandes récentes (Recents Orders)
-        $recentOrders = Order::latest()
+        // Commandes récentes (Recent Orders)
+        $recentOrders = Order::with('user')
+            ->latest()
             ->take(5)
             ->get();
 
@@ -98,23 +100,95 @@ class OrderController extends Controller
         return view('admin.orders.show', compact('order'));
     }
 
-
-
-    public function updateStatus($id)
+    public function updateStatus(Request $request, $id)
     {
-        $status = Request::input('status');
-
-
-        if (!in_array($status, ['pending', 'processing', 'shipped', 'delivered', 'cancelled'])) {
-            return redirect()->back()->with('error', 'Statut invalide');
-        }
+        $request->validate([
+            'status' => 'required|in:pending,processing,shipped,delivered,cancelled'
+        ]);
 
         $order = Order::findOrFail($id);
-        $order->status = $status;
+        $order->status = $request->input('status');
         $order->save();
 
         return redirect()
             ->route('admin.orders.show', $order->id)
             ->with('success', 'Statut de la commande mis à jour avec succès');
+    }
+
+    public function cancel($id)
+    {
+        $order = Order::findOrFail($id);
+        
+        if ($order->status === 'delivered') {
+            return redirect()
+                ->back()
+                ->with('error', 'Impossible d\'annuler une commande déjà livrée');
+        }
+        public function index(Request $request)
+        {
+         $query = Order::with(['user','items']);
+         if($request->filled('status')){
+            $query->where('status',$request->status);
+         }
+         if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        if ($request->filled('client_search')) {
+            $searchTerm = $request->client_search;
+            $query->whereHas('user', function ($q) use ($searchTerm) {
+                $q->where('first_name', 'LIKE', '%' . $searchTerm . '%')
+                  ->orWhere('last_name', 'LIKE', '%' . $searchTerm . '%')
+                  ->orWhere('email', 'LIKE', '%' . $searchTerm . '%');
+            });
+        }
+
+        // Filter by Minimum Amount
+
+        if ($request->filled('amount_min')) {
+            $query->where('total', '>=', $request->amount_min);
+        }
+
+        if ($request->filled('amount_max')) {
+            $query->where('total', '<=', $request->amount_max);
+        }
+
+        // Sorting
+        $sortBy = $request->get('sort', 'created_at');
+        $sortOrder = $request->get('order', 'desc');
+
+        // Allowed sort columns validation to prevent errors
+        $allowedSorts = ['created_at', 'total', 'status', 'order_number'];
+        if (in_array($sortBy, $allowedSorts)) {
+            $query->orderBy($sortBy, $sortOrder);
+        } else {
+            $query->latest();
+        }
+
+        // Calculate Statistics
+
+        $statsQuery = clone $query;
+        $stats = [
+            'total_orders' => $statsQuery->count(),
+            'total_amount' => $statsQuery->sum('total')
+        ];
+
+        // Pagination
+        $orders = $query->paginate(20);
+
+        // Return View
+        return view('admin.orders.index', compact('orders', 'stats'));
+        }
+
+        $order->status = 'cancelled';
+        $order->save();
+
+        return redirect()
+            ->route('admin.orders.index')
+            ->with('success', 'Commande annulée avec succès');
     }
 }

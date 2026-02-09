@@ -4,8 +4,7 @@ namespace App\Listeners;
 
 use App\Models\Cart;
 use Illuminate\Auth\Events\Login;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Log;
 
 class MergeCartOnLogin
 {
@@ -22,6 +21,13 @@ class MergeCartOnLogin
      */
     public function handle(Login $event): void
     {
-        Cart::mergeSessionToDatabase($event->user);
+        $oldSessionId = session()->getId();
+        
+        Log::info('Login event triggered', [
+            'user_id' => $event->user->id,
+            'session_id' => $oldSessionId
+        ]);
+        
+        Cart::mergeSessionToDatabase($event->user, $oldSessionId);
     }
 }

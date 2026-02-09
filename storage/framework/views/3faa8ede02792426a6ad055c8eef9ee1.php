@@ -6,27 +6,48 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="<?php echo e(route('products.index')); ?>">
-                        <?php if (isset($component)) { $__componentOriginal8892e718f3d0d7a916180885c6f012e7 = $component; } ?>
-<?php if (isset($attributes)) { $__attributesOriginal8892e718f3d0d7a916180885c6f012e7 = $attributes; } ?>
-<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.application-logo','data' => ['class' => 'block h-9 w-auto fill-current text-gray-800 dark:text-gray-200']] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? (array) $attributes->getIterator() : [])); ?>
-<?php $component->withName('application-logo'); ?>
-<?php if ($component->shouldRender()): ?>
-<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
-<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag && $constructor = (new ReflectionClass(Illuminate\View\AnonymousComponent::class))->getConstructor()): ?>
-<?php $attributes = $attributes->except(collect($constructor->getParameters())->map->getName()->all()); ?>
-<?php endif; ?>
-<?php $component->withAttributes(['class' => 'block h-9 w-auto fill-current text-gray-800 dark:text-gray-200']); ?>
-<?php echo $__env->renderComponent(); ?>
-<?php endif; ?>
-<?php if (isset($__attributesOriginal8892e718f3d0d7a916180885c6f012e7)): ?>
-<?php $attributes = $__attributesOriginal8892e718f3d0d7a916180885c6f012e7; ?>
-<?php unset($__attributesOriginal8892e718f3d0d7a916180885c6f012e7); ?>
-<?php endif; ?>
-<?php if (isset($__componentOriginal8892e718f3d0d7a916180885c6f012e7)): ?>
-<?php $component = $__componentOriginal8892e718f3d0d7a916180885c6f012e7; ?>
-<?php unset($__componentOriginal8892e718f3d0d7a916180885c6f012e7); ?>
-<?php endif; ?>
-                    </a>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <rect width="9" height="9" x="1.5" y="1.5" fill="#fff" rx="1">
+                                <animate id="SVGvBHXGeBR" attributeName="x" begin="0;SVGBBjjneux.end+0.15s"
+                                    dur="0.6s" keyTimes="0;.2;1" values="1.5;.5;1.5" />
+                                <animate attributeName="y" begin="0;SVGBBjjneux.end+0.15s" dur="0.6s"
+                                    keyTimes="0;.2;1" values="1.5;.5;1.5" />
+                                <animate attributeName="width" begin="0;SVGBBjjneux.end+0.15s" dur="0.6s"
+                                    keyTimes="0;.2;1" values="9;11;9" />
+                                <animate attributeName="height" begin="0;SVGBBjjneux.end+0.15s" dur="0.6s"
+                                    keyTimes="0;.2;1" values="9;11;9" />
+                            </rect>
+                            <rect width="9" height="9" x="13.5" y="1.5" fill="#fff" rx="1">
+                                <animate attributeName="x" begin="SVGvBHXGeBR.begin+0.15s" dur="0.6s"
+                                    keyTimes="0;.2;1" values="13.5;12.5;13.5" />
+                                <animate attributeName="y" begin="SVGvBHXGeBR.begin+0.15s" dur="0.6s"
+                                    keyTimes="0;.2;1" values="1.5;.5;1.5" />
+                                <animate attributeName="width" begin="SVGvBHXGeBR.begin+0.15s" dur="0.6s"
+                                    keyTimes="0;.2;1" values="9;11;9" />
+                                <animate attributeName="height" begin="SVGvBHXGeBR.begin+0.15s" dur="0.6s"
+                                    keyTimes="0;.2;1" values="9;11;9" />
+                            </rect>
+                            <rect width="9" height="9" x="13.5" y="13.5" fill="#fff" rx="1">
+                                <animate attributeName="x" begin="SVGvBHXGeBR.begin+0.3s" dur="0.6s"
+                                    keyTimes="0;.2;1" values="13.5;12.5;13.5" />
+                                <animate attributeName="y" begin="SVGvBHXGeBR.begin+0.3s" dur="0.6s"
+                                    keyTimes="0;.2;1" values="13.5;12.5;13.5" />
+                                <animate attributeName="width" begin="SVGvBHXGeBR.begin+0.3s" dur="0.6s"
+                                    keyTimes="0;.2;1" values="9;11;9" />
+                                <animate attributeName="height" begin="SVGvBHXGeBR.begin+0.3s" dur="0.6s"
+                                    keyTimes="0;.2;1" values="9;11;9" />
+                            </rect>
+                            <rect width="9" height="9" x="1.5" y="13.5" fill="#fff" rx="1">
+                                <animate id="SVGBBjjneux" attributeName="x" begin="SVGvBHXGeBR.begin+0.45s"
+                                    dur="0.6s" keyTimes="0;.2;1" values="1.5;.5;1.5" />
+                                <animate attributeName="y" begin="SVGvBHXGeBR.begin+0.45s" dur="0.6s"
+                                    keyTimes="0;.2;1" values="13.5;12.5;13.5" />
+                                <animate attributeName="width" begin="SVGvBHXGeBR.begin+0.45s" dur="0.6s"
+                                    keyTimes="0;.2;1" values="9;11;9" />
+                                <animate attributeName="height" begin="SVGvBHXGeBR.begin+0.45s" dur="0.6s"
+                                    keyTimes="0;.2;1" values="9;11;9" />
+                            </rect>
+                        </svg>
                 </div>
 
                 <!-- Navigation Links -->
@@ -127,7 +148,7 @@
 <?php unset($__componentOriginalc295f12dca9d42f28a259237a5724830); ?>
 <?php endif; ?>
 
-                             <?php if (isset($component)) { $__componentOriginalc295f12dca9d42f28a259237a5724830 = $component; } ?>
+                            <?php if (isset($component)) { $__componentOriginalc295f12dca9d42f28a259237a5724830 = $component; } ?>
 <?php if (isset($attributes)) { $__attributesOriginalc295f12dca9d42f28a259237a5724830 = $attributes; } ?>
 <?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.nav-link','data' => ['href' => route('admin.orders.index'),'active' => request()->routeIs('admin.orders.*')]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? (array) $attributes->getIterator() : [])); ?>
 <?php $component->withName('nav-link'); ?>
@@ -155,7 +176,7 @@
                 </div>
             </div>
 
-           
+
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <?php if(!auth()->check() || !auth()->user()->isAdmin()): ?>
                     <?php if (isset($component)) { $__componentOriginalc295f12dca9d42f28a259237a5724830 = $component; } ?>
@@ -169,8 +190,8 @@
 <?php endif; ?>
 <?php $component->withAttributes(['href' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(route('cart.index')),'active' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute(request()->routeIs('cart.*'))]); ?>
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                stroke-width="1.5"
+                            <path fill="none" stroke="currentColor" stroke-linecap="round"
+                                stroke-linejoin="round" stroke-width="1.5"
                                 d="M10.5 10h4m-2-2v4m4 9a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3m-8 0a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3M3.71 5.4h15.214c1.378 0 2.373 1.27 1.995 2.548l-1.654 5.6C19.01 14.408 18.196 15 17.27 15H8.112c-.927 0-1.742-.593-1.996-1.452zm0 0L3 3" />
                         </svg>
                         <?php
@@ -650,4 +671,5 @@
             </div>
         <?php endif; ?>
     </div>
-</nav><?php /**PATH C:\laragon\www\TifawinSouk-E-com\resources\views/layouts/navigation.blade.php ENDPATH**/ ?>
+</nav>
+<?php /**PATH C:\laragon\www\TifawinSouk-E-com\resources\views/layouts/navigation.blade.php ENDPATH**/ ?>
