@@ -30,7 +30,7 @@ class   StockController extends Controller
             $product->increment('quantity', $data['quantity']);
             StockMovement::create([
                 'product_id'=> $product->id,
-                'user_id' => 1,
+                'user_id' => auth()->id(),
                 'type' => 'adjustment',
                 'quantity' => $data['quantity'],
                 'stock_alert_threshold' => $data['stock_alert_threshold']
