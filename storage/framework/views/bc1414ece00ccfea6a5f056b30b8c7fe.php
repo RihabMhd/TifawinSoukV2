@@ -25,11 +25,7 @@
                 
                 <div class="bg-green-500 text-white rounded-lg p-6 shadow">
                     <p class="text-sm">CA du jour</p>
-<<<<<<< HEAD
                     <p class="text-2xl font-bold"> <?php echo e($revenueToday); ?> MAD</p>
-=======
-                    <p class="text-2xl font-bold"><?php echo e($revenueToday); ?> MAD</p>
->>>>>>> 982e0e9490e291dcf0a4e6884271ec99c313ebc0
                 </div>
 
                 
@@ -113,11 +109,7 @@
                                 <td class="px-6 py-3"><?php echo e($order->created_at->format('d/m/Y')); ?></td>
                                 <td class="px-6 py-3">
                                     <a href="<?php echo e(route('admin.orders.show', $order)); ?>"
-<<<<<<< HEAD
                                     class="text-indigo-600 hover:underline">
-=======
-                                       class="text-indigo-600 hover:underline">
->>>>>>> 982e0e9490e291dcf0a4e6884271ec99c313ebc0
                                         Détail
                                     </a>
                                 </td>
@@ -153,15 +145,9 @@
         new Chart(document.getElementById('statusChart'), {
             type: 'doughnut',
             data: {
-<<<<<<< HEAD
                 labels: <?php echo json_encode($chartLabels); ?>,
                 datasets: [{
                     data: <?php echo json_encode($chartData); ?>,
-=======
-                labels: <?php echo json_encode($statusLabels, 15, 512) ?>,
-                datasets: [{
-                    data: <?php echo json_encode($statusData, 15, 512) ?>,
->>>>>>> 982e0e9490e291dcf0a4e6884271ec99c313ebc0
                     backgroundColor: ['#facc15', '#22c55e', '#ef4444']
                 }]
             }

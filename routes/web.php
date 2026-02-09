@@ -82,7 +82,7 @@ Route::middleware(['auth', 'admin'])
 
         Route::get('/orders/dashboard', [AdminOrderController::class, 'dashboard'])
             ->name('orders.dashboard');
-
+        
         Route::get('/orders', [AdminOrderController::class, 'index'])
             ->name('orders.index');
 
