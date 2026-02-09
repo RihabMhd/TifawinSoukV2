@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Fournisseur;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -13,37 +14,38 @@ class ProductController extends Controller
     {
         $categories = Category::withCount('products')->orderBy('title')->get();
         
-
-        $query = Product::with(['user', 'category']);
+        $query = Product::with(['user', 'category', 'fournisseur']);
       
         if ($request->has('category_id') && $request->category_id != '') {
             $query->where('category_id', $request->category_id);
         }
         
-        
         if ($request->has('search') && $request->search != '') {
             $query->where('title', 'like', '%' . $request->search . '%');
         }
         
-        
         $products = $query->latest()->paginate(12)->withQueryString();
-            
-        return view('products.index', compact('products', 'categories'));
         
+        // Check if admin - show table view, otherwise show card view
+        if (auth()->check() && auth()->user()->isAdmin()) {
+            return view('admin.products.index', compact('products', 'categories'));
+        }
+        
+        return view('products.index', compact('products', 'categories'));
     }
 
     public function create()
     {
         $categories = Category::orderBy('title')->get();
+        $fournisseurs = Fournisseur::orderBy('name')->get();
         
         if ($categories->isEmpty()) {
             return redirect()->route('categories.create')
                 ->with('error', 'Please create a category first before adding products.');
         }
         
-        return view('admin.products.create', compact('categories'));
+        return view('admin.products.create', compact('categories', 'fournisseurs'));
     }
-
 
     public function store(Request $request)
     {
@@ -52,7 +54,8 @@ class ProductController extends Controller
             'description' => 'nullable|string|max:2000',
             'price' => 'required|numeric|min:0|max:999999.99',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'category_id' => 'required|exists:categories,id'
+            'category_id' => 'required|exists:categories,id',
+            'fournisseur_id' => 'nullable|exists:fournisseurs,id'
         ]);
 
         if ($request->hasFile('image')) {
@@ -68,12 +71,10 @@ class ProductController extends Controller
             ->with('success', 'Product created successfully!');
     }
 
-
     public function show(string $id)
     {
-        $product = Product::with(['user', 'category'])->findOrFail($id);
+        $product = Product::with(['user', 'category', 'fournisseur'])->findOrFail($id);
         
-  
         $relatedProducts = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
             ->take(4)
@@ -82,13 +83,13 @@ class ProductController extends Controller
         return view('products.show', compact('product', 'relatedProducts'));
     }
 
-  
     public function edit(string $id)
     {
         $product = Product::findOrFail($id);
         $categories = Category::orderBy('title')->get();
+        $fournisseurs = Fournisseur::orderBy('name')->get();
 
-        return view('admin.products.edit', compact('product', 'categories'));
+        return view('admin.products.edit', compact('product', 'categories', 'fournisseurs'));
     }
 
     public function update(Request $request, string $id)
@@ -100,12 +101,11 @@ class ProductController extends Controller
             'description' => 'nullable|string|max:2000',
             'price' => 'required|numeric|min:0|max:999999.99',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-            'category_id' => 'required|exists:categories,id'
+            'category_id' => 'required|exists:categories,id',
+            'fournisseur_id' => 'nullable|exists:fournisseurs,id'
         ]);
 
-        
         if ($request->hasFile('image')) {
-         
             if ($product->image) {
                 Storage::disk('public')->delete($product->image);
             }
@@ -120,12 +120,10 @@ class ProductController extends Controller
             ->with('success', 'Product updated successfully!');
     }
 
-   
     public function destroy(string $id)
     {
         $product = Product::findOrFail($id);
         
-       
         if ($product->image) {
             Storage::disk('public')->delete($product->image);
         }
