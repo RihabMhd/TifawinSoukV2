@@ -5,17 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stock Dashboard</title>
 
-    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-black min-h-screen p-6">
 
 <div class="max-w-6xl mx-auto bg-gray-700 rounded-lg shadow-sm">
 
-    <!-- HEADER -->
     <div class="flex items-center justify-between px-6 py-4 border-b border-gray-600">
         <h2 class="text-lg font-semibold text-white">
             Total price tous les produits :
@@ -32,12 +29,10 @@
         </select>
     </div>
 
-    <!-- CHART -->
     <div class="p-6 bg-gray-800 h-80 w-full flex justify-center">
         <canvas id="stockChart" height="50"></canvas>
     </div>
 
-    <!-- TABLE -->
     <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-700 text-sm">
             <thead class="bg-black">
@@ -51,32 +46,33 @@
 
             <tbody id="productTable" class="bg-gray-900 divide-y divide-gray-800 text-white">
 
-                <!-- RUPTURE -->
                 <?php $__currentLoopData = $product_rupture; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <tr data-status="rupture">
                     <td class="px-6 py-4"><?php echo e($product->title); ?></td>
-                    <td class="px-6 py-4"><?php echo e($product->price); ?></td>
+                    <td class="px-6 py-4"><?php echo e($product->stock_alert_threshold); ?></td>
                     <td class="px-6 py-4"><?php echo e($product->quantity); ?></td>
                     <td class="px-6 py-4">
                         <span class="inline-flex px-2 py-0.5 text-xs rounded-md
                             bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300">
                             Rupture
                         </span>
+                        <a class="text-yellow-500" href="<?php echo e(route('admin.stock.edit',$product->id)); ?>">modifier</a>
                     </td>
                 </tr>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
-                <!-- CRITICAL -->
                 <?php $__currentLoopData = $product_stock_critique; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <tr data-status="critical">
                     <td class="px-6 py-4"><?php echo e($product->title); ?></td>
-                    <td class="px-6 py-4"><?php echo e($product->price); ?></td>
+                    <td class="px-6 py-4"><?php echo e($product->stock_alert_threshold); ?></td>
                     <td class="px-6 py-4"><?php echo e($product->quantity); ?></td>
                     <td class="px-6 py-4">
                         <span class="inline-flex px-2 py-0.5 text-xs rounded-md
                             bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300">
                             Stock critique
                         </span>
+                        <a class="text-yellow-500" href="<?php echo e(route('admin.stock.edit',$product->id)); ?>">modifier</a>
+                        
                     </td>
                 </tr>
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -86,7 +82,6 @@
     </div>
 </div>
 
-<!-- FILTER TABLE -->
 <script>
 document.getElementById('stockFilter').addEventListener('change', function () {
     const value = this.value;
@@ -102,7 +97,6 @@ document.getElementById('stockFilter').addEventListener('change', function () {
 });
 </script>
 
-<!-- CHART SCRIPT -->
 <script>
     const ruptureCount = <?php echo e(count($product_rupture)); ?>;
     const criticalCount = <?php echo e(count($product_stock_critique)); ?>;

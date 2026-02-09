@@ -49,13 +49,14 @@
                 @foreach($product_rupture as $product)
                 <tr data-status="rupture">
                     <td class="px-6 py-4">{{ $product->title }}</td>
-                    <td class="px-6 py-4">{{ $product->price }}</td>
+                    <td class="px-6 py-4">{{ $product->stock_alert_threshold }}</td>
                     <td class="px-6 py-4">{{ $product->quantity }}</td>
                     <td class="px-6 py-4">
                         <span class="inline-flex px-2 py-0.5 text-xs rounded-md
                             bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300">
                             Rupture
                         </span>
+                        <a class="text-yellow-500" href="{{ route('admin.stock.edit',$product->id) }}">modifier</a>
                     </td>
                 </tr>
                 @endforeach
@@ -63,13 +64,15 @@
                 @foreach($product_stock_critique as $product)
                 <tr data-status="critical">
                     <td class="px-6 py-4">{{ $product->title }}</td>
-                    <td class="px-6 py-4">{{ $product->price }}</td>
+                    <td class="px-6 py-4">{{ $product->stock_alert_threshold }}</td>
                     <td class="px-6 py-4">{{ $product->quantity }}</td>
                     <td class="px-6 py-4">
                         <span class="inline-flex px-2 py-0.5 text-xs rounded-md
                             bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300">
                             Stock critique
                         </span>
+                        <a class="text-yellow-500" href="{{ route('admin.stock.edit',$product->id) }}">modifier</a>
+                        
                     </td>
                 </tr>
                 @endforeach

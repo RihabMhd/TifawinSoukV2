@@ -99,6 +99,8 @@ Route::middleware(['auth', 'admin'])
     // ================================== stocks ======================
 
     Route::get('/admin/stock/dashboard',[StockController::class,'dashboard'])->name('admin.stock.dashboard');
+    Route::get('/admin/stock/adjust/{id}',[StockController::class,'edit'])->name('admin.stock.edit');
+    Route::patch('/admin/stock/adjust/{product}',[StockController::class,'adjust'])->name('admin.stock.adjust');
     Route::get('/dashboard', [AdminOrderController::class, 'dashboard'])->name('dashboard');
 
 
