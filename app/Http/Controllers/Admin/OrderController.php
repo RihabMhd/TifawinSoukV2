@@ -7,6 +7,8 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+
 
 class OrderController extends Controller
 {
@@ -121,6 +123,65 @@ class OrderController extends Controller
             return redirect()
                 ->back()
                 ->with('error', 'Impossible d\'annuler une commande déjà livrée');
+        }
+        public function index(Request $request)
+        {
+         $query = Order::with(['user','items']);
+         if($request->filled('status')){
+            $query->where('status',$request->status);
+         }
+         if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        if ($request->filled('client_search')) {
+            $searchTerm = $request->client_search;
+            $query->whereHas('user', function ($q) use ($searchTerm) {
+                $q->where('first_name', 'LIKE', '%' . $searchTerm . '%')
+                  ->orWhere('last_name', 'LIKE', '%' . $searchTerm . '%')
+                  ->orWhere('email', 'LIKE', '%' . $searchTerm . '%');
+            });
+        }
+
+        // Filter by Minimum Amount
+
+        if ($request->filled('amount_min')) {
+            $query->where('total', '>=', $request->amount_min);
+        }
+
+        if ($request->filled('amount_max')) {
+            $query->where('total', '<=', $request->amount_max);
+        }
+
+        // Sorting
+        $sortBy = $request->get('sort', 'created_at');
+        $sortOrder = $request->get('order', 'desc');
+
+        // Allowed sort columns validation to prevent errors
+        $allowedSorts = ['created_at', 'total', 'status', 'order_number'];
+        if (in_array($sortBy, $allowedSorts)) {
+            $query->orderBy($sortBy, $sortOrder);
+        } else {
+            $query->latest();
+        }
+
+        // Calculate Statistics
+
+        $statsQuery = clone $query;
+        $stats = [
+            'total_orders' => $statsQuery->count(),
+            'total_amount' => $statsQuery->sum('total')
+        ];
+
+        // Pagination
+        $orders = $query->paginate(20);
+
+        // Return View
+        return view('admin.orders.index', compact('orders', 'stats'));
         }
 
         $order->status = 'cancelled';
