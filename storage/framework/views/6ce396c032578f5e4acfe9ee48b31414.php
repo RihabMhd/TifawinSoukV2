@@ -17,7 +17,7 @@
         <h2 class="text-lg font-semibold text-white">
             Total price tous les produits :
             <span class="text-green-400">
-                {{ $product_valeur_inventaire }} $
+                <?php echo e($product_valeur_inventaire); ?> $
             </span>
         </h2>
 
@@ -46,36 +46,36 @@
 
             <tbody id="productTable" class="bg-gray-900 divide-y divide-gray-800 text-white">
 
-                @foreach($product_rupture as $product)
+                <?php $__currentLoopData = $product_rupture; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <tr data-status="rupture">
-                    <td class="px-6 py-4">{{ $product->title }}</td>
-                    <td class="px-6 py-4">{{ $product->stock_alert_threshold }}</td>
-                    <td class="px-6 py-4">{{ $product->quantity }}</td>
+                    <td class="px-6 py-4"><?php echo e($product->title); ?></td>
+                    <td class="px-6 py-4"><?php echo e($product->stock_alert_threshold); ?></td>
+                    <td class="px-6 py-4"><?php echo e($product->quantity); ?></td>
                     <td class="px-6 py-4">
                         <span class="inline-flex px-2 py-0.5 text-xs rounded-md
                             bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300">
                             Rupture
                         </span>
-                        <a class="text-yellow-500" href="{{ route('admin.stock.edit',$product->id) }}">modifier</a>
+                        <a class="text-yellow-500" href="<?php echo e(route('admin.stock.edit',$product->id)); ?>">modifier</a>
                     </td>
                 </tr>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
-                @foreach($product_stock_critique as $product)
+                <?php $__currentLoopData = $product_stock_critique; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $product): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <tr data-status="critical">
-                    <td class="px-6 py-4">{{ $product->title }}</td>
-                    <td class="px-6 py-4">{{ $product->stock_alert_threshold }}</td>
-                    <td class="px-6 py-4">{{ $product->quantity }}</td>
+                    <td class="px-6 py-4"><?php echo e($product->title); ?></td>
+                    <td class="px-6 py-4"><?php echo e($product->stock_alert_threshold); ?></td>
+                    <td class="px-6 py-4"><?php echo e($product->quantity); ?></td>
                     <td class="px-6 py-4">
                         <span class="inline-flex px-2 py-0.5 text-xs rounded-md
                             bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300">
                             Stock critique
                         </span>
-                        <a class="text-yellow-500" href="{{ route('admin.stock.edit',$product->id) }}">modifier</a>
+                        <a class="text-yellow-500" href="<?php echo e(route('admin.stock.edit',$product->id)); ?>">modifier</a>
                         
                     </td>
                 </tr>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
             </tbody>
         </table>
@@ -98,8 +98,8 @@ document.getElementById('stockFilter').addEventListener('change', function () {
 </script>
 
 <script>
-    const ruptureCount = {{ count($product_rupture) }};
-    const criticalCount = {{ count($product_stock_critique) }};
+    const ruptureCount = <?php echo e(count($product_rupture)); ?>;
+    const criticalCount = <?php echo e(count($product_stock_critique)); ?>;
 
     const ctx = document.getElementById('stockChart').getContext('2d');
 
@@ -135,3 +135,4 @@ document.getElementById('stockFilter').addEventListener('change', function () {
 
 </body>
 </html>
+<?php /**PATH C:\laragon\www\TifawinSoukV2\resources\views/admin/stocks/dashboard.blade.php ENDPATH**/ ?>
