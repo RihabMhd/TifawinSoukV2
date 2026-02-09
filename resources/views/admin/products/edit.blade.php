@@ -1,208 +1,239 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Edit Product') }}
-        </h2>
-    </x-slot>
+@extends('adminlte::page')
 
-    <div class="py-12">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <form action="{{ route('admin.products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        @method('PUT')
+@section('title', 'Edit Product')
 
-                        {{-- Product Title --}}
-                        <div class="mb-6">
-                            <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Product Title <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" 
-                                   id="title" 
-                                   name="title" 
-                                   value="{{ old('title', $product->title) }}"
-                                   class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600"
-                                   required>
-                            @error('title')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
+@section('content_header')
+<div class="d-flex justify-content-between align-items-center">
+    <h1>
+        <i class="fas fa-edit"></i> Edit Product
+    </h1>
 
-                        {{-- Category --}}
-                        <div class="mb-6">
-                            <label for="category_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Category <span class="text-red-500">*</span>
-                            </label>
-                            <select id="category_id" 
-                                    name="category_id"
-                                    class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600"
-                                    required>
-                                <option value="">Select a category</option>
-                                @foreach($categories as $category)
-                                <option value="{{ $category->id }}" {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
+    <a href="{{ route('products.index') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+</div>
+@stop
+
+@section('content')
+
+<div class="row justify-content-center">
+    <div class="col-md-10">
+
+        <div class="card card-outline card-primary">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-box"></i> Product Details
+                </h3>
+            </div>
+
+            <form action="{{ route('admin.products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+
+                <div class="card-body">
+
+                    {{-- Title --}}
+                    <div class="form-group">
+                        <label for="title">
+                            Product Title <span class="text-danger">*</span>
+                        </label>
+                        <input type="text"
+                               id="title"
+                               name="title"
+                               value="{{ old('title', $product->title) }}"
+                               class="form-control @error('title') is-invalid @enderror"
+                               required>
+
+                        @error('title')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    {{-- Category --}}
+                    <div class="form-group">
+                        <label for="category_id">
+                            Category <span class="text-danger">*</span>
+                        </label>
+                        <select id="category_id"
+                                name="category_id"
+                                class="form-control @error('category_id') is-invalid @enderror"
+                                required>
+                            <option value="">Select a category</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}"
+                                    {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
                                     {{ $category->title }}
                                 </option>
-                                @endforeach
-                            </select>
-                            @error('category_id')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
+                            @endforeach
+                        </select>
 
-                        {{-- Fournisseur (Supplier) --}}
-                        <div class="mb-6">
-                            <label for="fournisseur_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Supplier
-                            </label>
-                            <select id="fournisseur_id" 
-                                    name="fournisseur_id"
-                                    class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
-                                <option value="">No supplier</option>
-                                @foreach($fournisseurs as $fournisseur)
-                                <option value="{{ $fournisseur->id }}" {{ old('fournisseur_id', $product->fournisseur_id) == $fournisseur->id ? 'selected' : '' }}>
+                        @error('category_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    {{-- Supplier --}}
+                    <div class="form-group">
+                        <label for="fournisseur_id">Supplier</label>
+                        <select id="fournisseur_id"
+                                name="fournisseur_id"
+                                class="form-control @error('fournisseur_id') is-invalid @enderror">
+                            <option value="">No supplier</option>
+                            @foreach($fournisseurs as $fournisseur)
+                                <option value="{{ $fournisseur->id }}"
+                                    {{ old('fournisseur_id', $product->fournisseur_id) == $fournisseur->id ? 'selected' : '' }}>
                                     {{ $fournisseur->name }} - {{ $fournisseur->email }}
                                 </option>
-                                @endforeach
-                            </select>
-                            @error('fournisseur_id')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                            @if($fournisseurs->isEmpty())
-                                <p class="mt-1 text-xs text-yellow-600 dark:text-yellow-400">
-                                    No suppliers available. <a href="{{ route('admin.fournisseurs.create') }}" class="underline">Create one</a>
-                                </p>
-                            @endif
-                        </div>
+                            @endforeach
+                        </select>
 
-                        {{-- Price and Quantity Row --}}
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                            {{-- Price --}}
-                            <div>
-                                <label for="price" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Price ($) <span class="text-red-500">*</span>
+                        @error('fournisseur_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+
+                        @if($fournisseurs->isEmpty())
+                            <small class="form-text text-warning">
+                                No suppliers available. <a href="{{ route('admin.fournisseurs.create') }}">Create one</a>
+                            </small>
+                        @endif
+                    </div>
+
+                    <div class="row">
+                        {{-- Price --}}
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="price">
+                                    Price ($) <span class="text-danger">*</span>
                                 </label>
-                                <input type="number" 
-                                       id="price" 
-                                       name="price" 
+                                <input type="number"
+                                       id="price"
+                                       name="price"
                                        value="{{ old('price', $product->price) }}"
                                        step="0.01"
                                        min="0"
-                                       class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600"
+                                       class="form-control @error('price') is-invalid @enderror"
                                        required>
+
                                 @error('price')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+                        </div>
 
-                            {{-- Quantity --}}
-                            <div>
-                                <label for="quantity" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                    Quantity in Stock <span class="text-red-500">*</span>
+                        {{-- Quantity --}}
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="quantity">
+                                    Quantity in Stock <span class="text-danger">*</span>
                                 </label>
-                                <input type="number" 
-                                       id="quantity" 
-                                       name="quantity" 
+                                <input type="number"
+                                       id="quantity"
+                                       name="quantity"
                                        value="{{ old('quantity', $product->quantity) }}"
                                        min="0"
-                                       class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600"
+                                       class="form-control @error('quantity') is-invalid @enderror"
                                        required>
+
                                 @error('quantity')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                    <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
+                    </div>
 
-                        {{-- Stock Alert Threshold --}}
-                        <div class="mb-6">
-                            <label for="stock_alert_threshold" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Stock Alert Threshold
-                            </label>
-                            <input type="number" 
-                                   id="stock_alert_threshold" 
-                                   name="stock_alert_threshold" 
-                                   value="{{ old('stock_alert_threshold', $product->stock_alert_threshold ?? 10) }}"
-                                   min="0"
-                                   class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
-                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                You'll receive an alert when stock falls below this number
-                            </p>
-                            @error('stock_alert_threshold')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
+                    {{-- Stock Alert Threshold --}}
+                    <div class="form-group">
+                        <label for="stock_alert_threshold">Stock Alert Threshold</label>
+                        <input type="number"
+                               id="stock_alert_threshold"
+                               name="stock_alert_threshold"
+                               value="{{ old('stock_alert_threshold', $product->stock_alert_threshold ?? 10) }}"
+                               min="0"
+                               class="form-control @error('stock_alert_threshold') is-invalid @enderror">
+                        <small class="form-text text-muted">
+                            You'll receive an alert when stock falls below this number
+                        </small>
+
+                        @error('stock_alert_threshold')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    {{-- Description --}}
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description"
+                                  name="description"
+                                  rows="4"
+                                  class="form-control @error('description') is-invalid @enderror"
+                                  placeholder="Optional product description">{{ old('description', $product->description) }}</textarea>
+
+                        @error('description')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    {{-- Current Image Preview --}}
+                    @if($product->image)
+                    <div class="form-group">
+                        <label>Current Image</label>
+                        <div>
+                            <img src="{{ asset('storage/' . $product->image) }}"
+                                 alt="{{ $product->title }}"
+                                 class="img-thumbnail"
+                                 style="max-width: 200px; max-height: 200px; object-fit: cover;">
                         </div>
+                    </div>
+                    @endif
 
-                        {{-- Description --}}
-                        <div class="mb-6">
-                            <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Description
-                            </label>
-                            <textarea id="description" 
-                                      name="description" 
-                                      rows="4"
-                                      class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">{{ old('description', $product->description) }}</textarea>
-                            @error('description')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        {{-- Current Image Preview --}}
-                        @if($product->image)
-                        <div class="mb-6">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Current Image
-                            </label>
-                            <div class="w-48 h-48 bg-gray-100 dark:bg-gray-700 rounded-lg overflow-hidden">
-                                <img src="{{ asset('storage/' . $product->image) }}" 
-                                     alt="{{ $product->title }}"
-                                     class="w-full h-full object-cover">
-                            </div>
-                        </div>
-                        @endif
-
-                        {{-- Image Upload --}}
-                        <div class="mb-6">
-                            <label for="image" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                {{ $product->image ? 'Change Image' : 'Product Image' }}
-                            </label>
-                            <input type="file" 
-                                   id="image" 
+                    {{-- Image Upload --}}
+                    <div class="form-group">
+                        <label for="image">{{ $product->image ? 'Change Image' : 'Product Image' }}</label>
+                        <div class="custom-file">
+                            <input type="file"
+                                   id="image"
                                    name="image"
                                    accept="image/*"
-                                   class="w-full text-sm text-gray-500 dark:text-gray-400
-                                          file:mr-4 file:py-2 file:px-4
-                                          file:rounded-md file:border-0
-                                          file:text-sm file:font-semibold
-                                          file:bg-gray-100 file:text-gray-700
-                                          hover:file:bg-gray-200
-                                          dark:file:bg-gray-700 dark:file:text-gray-300
-                                          dark:hover:file:bg-gray-600">
-                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                Accepted formats: JPG, PNG, GIF, WebP (Max: 2MB)
-                                @if($product->image)
-                                <br>Leave empty to keep current image
-                                @endif
-                            </p>
+                                   class="custom-file-input @error('image') is-invalid @enderror">
+                            <label class="custom-file-label" for="image">Choose file</label>
+
                             @error('image')
-                            <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
+                                <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+                        <small class="form-text text-muted">
+                            Accepted formats: JPG, PNG, GIF, WebP (Max: 2MB)
+                            @if($product->image)
+                                <br>Leave empty to keep current image
+                            @endif
+                        </small>
+                    </div>
 
-                        {{-- Buttons --}}
-                        <div class="flex items-center gap-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-                            <button type="submit" 
-                                    class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                                Update Product
-                            </button>
-
-                            <a href="{{ route('products.index') }}" 
-                               class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-25 transition ease-in-out duration-150">
-                                Cancel
-                            </a>
-                        </div>
-                    </form>
                 </div>
-            </div>
+
+                <div class="card-footer d-flex justify-content-between">
+                    <a href="{{ route('products.index') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Update Product
+                    </button>
+                </div>
+
+            </form>
         </div>
+
     </div>
-</x-app-layout>
+</div>
+
+@stop
+
+@section('js')
+<script>
+$('#image').on('change', function() {
+    var fileName = $(this).val().split('\\').pop();
+    $(this).next('.custom-file-label').html(fileName);
+});
+</script>
+@stop

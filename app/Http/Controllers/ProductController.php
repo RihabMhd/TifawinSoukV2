@@ -82,6 +82,10 @@ class ProductController extends Controller
             ->take(4)
             ->get();
 
+        if (auth()->check() && auth()->user()->isAdmin()) {
+            return view('admin.products.show', compact('product', 'relatedProducts'));
+        }
+
         return view('products.show', compact('product', 'relatedProducts'));
     }
 
