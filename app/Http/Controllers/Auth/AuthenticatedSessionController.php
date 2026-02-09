@@ -30,7 +30,7 @@ class AuthenticatedSessionController extends Controller
 
         // Get the guest session ID from the cookie BEFORE session regeneration
         $guestSessionId = $request->cookie('guest_session_id');
-        
+
         Log::info('Login attempt', [
             'user_id' => Auth::id(),
             'guest_session_from_cookie' => $guestSessionId,
@@ -46,14 +46,19 @@ class AuthenticatedSessionController extends Controller
                 'guest_session_id' => $guestSessionId,
                 'new_session_id' => $request->session()->getId()
             ]);
-            
+
             Cart::mergeSessionToDatabase(Auth::user(), $guestSessionId);
-            
+
             // Clear the cookie after merging
             cookie()->queue(cookie()->forget('guest_session_id'));
         }
 
-        return redirect()->intended(route('dashboard', absolute: false));
+
+        if (auth()->user()->isAdmin()) {
+            return redirect()->intended(route('admin.dashboard'));
+        }
+
+        return redirect()->intended(route('user.dashboard'));
     }
 
     /**

@@ -1,203 +1,192 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Mon Panier') }}
-        </h2>
-    </x-slot>
+@extends('adminlte::page')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+@section('title', 'Mon Panier')
 
-          
-            @if(session('success'))
-                <div class="mb-4 px-4 py-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
-                    <p class="text-sm text-green-800 dark:text-green-200">
-                        {{ session('success') }}
-                    </p>
-                </div>
-            @endif
+@section('content_header')
+<h1><i class="fas fa-shopping-cart"></i> Mon Panier</h1>
+@stop
 
-            @if(session('error'))
-                <div class="mb-4 px-4 py-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
-                    <p class="text-sm text-red-800 dark:text-red-200">
-                        {{ session('error') }}
-                    </p>
-                </div>
-            @endif
+@section('content')
 
-           
-            @if($cart->items->isEmpty())
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-12 text-center">
-                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m12-9l2 9M9 22h6"/>
-                        </svg>
+{{-- Alerts --}}
+@if(session('success'))
+<div class="alert alert-success">
+    <i class="fas fa-check-circle"></i> {{ session('success') }}
+</div>
+@endif
 
-                        <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">
-                            Votre panier est vide
-                        </h3>
+@if(session('error'))
+<div class="alert alert-danger">
+    <i class="fas fa-times-circle"></i> {{ session('error') }}
+</div>
+@endif
 
-                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                            Parcourez les produits et ajoutez-les à votre panier.
-                        </p>
+{{-- Empty cart --}}
+@if($cart->items->isEmpty())
+<div class="card">
+    <div class="card-body text-center py-5">
+        <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+        <h5>Votre panier est vide</h5>
+        <p class="text-muted">Parcourez les produits et ajoutez-les à votre panier.</p>
+        <a href="{{ route('products.index') }}" class="btn btn-primary">
+            <i class="fas fa-store"></i> Découvrir les produits
+        </a>
+    </div>
+</div>
 
-                        <div class="mt-6">
-                            <a href="{{ route('products.index') }}"
-                               class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-800 rounded-md text-xs font-semibold uppercase hover:bg-gray-700 dark:hover:bg-white">
-                                Découvrir les produits
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            @else
+@else
 
-            
-            <div class="grid grid-cols-1 lg:grid-cols-10 gap-6">
+<div class="row">
 
-               
-                <div class="lg:col-span-7 bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="overflow-x-auto">
-                        <table class="w-full">
-                            <thead class="bg-gray-100 dark:bg-gray-700 text-sm uppercase">
-                                <tr>
-                                    <th class="p-4 text-left">Produit</th>
-                                    <th class="p-4 text-center">Prix</th>
-                                    <th class="p-4 text-center">Quantité</th>
-                                    <th class="p-4 text-center">Sous-total</th>
-                                    <th class="p-4"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($cart->items as $item)
-                                <tr class="border-t dark:border-gray-700">
-                                    <td class="p-4">
-                                        <div class="flex items-center gap-4">
-                                            @if($item->product->image)
-                                            <img src="{{ asset('storage/' . $item->product->image) }}"
-                                                 class="w-16 h-16 rounded object-cover"
-                                                 alt="{{ $item->product->title ?? $item->product->name }}">
-                                            @else
-                                            <div class="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center">
-                                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                                </svg>
-                                            </div>
-                                            @endif
-
-                                            <div>
-                                                <a href="{{ route('products.show', $item->product) }}"
-                                                   class="font-medium text-gray-900 dark:text-gray-100 hover:underline">
-                                                    {{ $item->product->title ?? $item->product->name }}
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </td>
-
-                                    <td class="p-4 text-center text-gray-700 dark:text-gray-300">
-                                        ${{ number_format($item->price_at_addition, 2) }}
-                                    </td>
-
-                                    <td class="p-4 text-center">
-                                        <form method="POST"
-                                              action="{{ route('cart.update', $item) }}"
-                                              class="flex justify-center gap-2">
-                                            @csrf
-                                            @method('PATCH')
-
-                                            <input type="number"
-                                                   name="quantity"
-                                                   min="1"
-                                                   value="{{ $item->quantity }}"
-                                                   class="w-20 border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 rounded text-center">
-
-                                            <button type="submit" class="px-3 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600">
-                                                Modifier
-                                            </button>
-                                        </form>
-                                    </td>
-
-                                    <td class="p-4 text-center font-semibold text-gray-900 dark:text-gray-100">
-                                        ${{ number_format($item->getSubtotal(), 2) }}
-                                    </td>
-
-                                    <td class="p-4 text-center">
-                                        <form method="POST"
-                                              action="{{ route('cart.remove', $item) }}"
-                                              onsubmit="return confirm('Supprimer ce produit du panier ?');">
-                                            @csrf
-                                            @method('DELETE')
-
-                                            <button type="submit" class="text-red-600 hover:text-red-800 text-xl font-bold">
-                                                ×
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-             
-                <div class="lg:col-span-3">
-                    <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6 sticky top-24">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-                            Résumé de la commande
-                        </h3>
-
-                        <div class="flex justify-between text-sm mb-2 text-gray-700 dark:text-gray-300">
-                            <span>Sous-total</span>
-                            <span>${{ number_format($cart->getTotal(), 2) }}</span>
-                        </div>
-
-                        <div class="flex justify-between text-sm mb-2 text-gray-700 dark:text-gray-300">
-                            <span>Livraison</span>
-                            <span class="text-green-600">Gratuite</span>
-                        </div>
-
-                        <hr class="my-4 dark:border-gray-700">
-
-                        <div class="flex justify-between text-xl font-bold mb-6 text-gray-900 dark:text-gray-100">
-                            <span>Total</span>
-                            <span>${{ number_format($cart->getTotal(), 2) }}</span>
-                        </div>
-
-                        @auth
-                            @if(auth()->user()->role_id == 3)
-                                <a href="{{ route('checkout.index') }}"
-                                   class="block w-full text-center px-4 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 font-semibold">
-                                    Passer la commande
-                                </a>
-                            @else
-                                <div class="block w-full text-center px-4 py-3 bg-gray-300 text-gray-600 rounded-md cursor-not-allowed">
-                                    Seuls les clients peuvent commander
-                                </div>
-                            @endif
-                        @else
-                            <a href="{{ route('login') }}"
-                               class="block w-full text-center px-4 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-semibold">
-                                Se connecter pour commander
-                            </a>
-                        @endauth
-
-                        <form method="POST"
-                              action="{{ route('cart.clear') }}"
-                              class="mt-4"
-                              onsubmit="return confirm('Voulez-vous vraiment vider le panier ?');">
-                            @csrf
-                            @method('DELETE')
-
-                            <button type="submit" class="w-full text-sm text-red-600 hover:underline">
-                                Vider le panier
-                            </button>
-                        </form>
-                    </div>
-                </div>
-
+    {{-- Cart items --}}
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-box"></i> Produits
+                </h3>
             </div>
-            @endif
+
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Produit</th>
+                            <th class="text-center">Prix</th>
+                            <th class="text-center">Quantité</th>
+                            <th class="text-center">Sous-total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($cart->items as $item)
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    @if($item->product->image)
+                                        <img src="{{ asset('storage/'.$item->product->image) }}"
+                                             class="img-thumbnail mr-3"
+                                             style="width:60px;height:60px;">
+                                    @else
+                                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center mr-3"
+                                             style="width:60px;height:60px;">
+                                            <i class="fas fa-image"></i>
+                                        </div>
+                                    @endif
+
+                                    <a href="{{ route('products.show', $item->product) }}">
+                                        {{ $item->product->title ?? $item->product->name }}
+                                    </a>
+                                </div>
+                            </td>
+
+                            <td class="text-center">
+                                ${{ number_format($item->price_at_addition, 2) }}
+                            </td>
+
+                            <td class="text-center">
+                                <form method="POST"
+                                      action="{{ route('cart.update', $item) }}"
+                                      class="form-inline justify-content-center">
+                                    @csrf
+                                    @method('PATCH')
+
+                                    <input type="number"
+                                           name="quantity"
+                                           value="{{ $item->quantity }}"
+                                           min="1"
+                                           class="form-control form-control-sm mr-2"
+                                           style="width:80px">
+
+                                    <button class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-sync"></i>
+                                    </button>
+                                </form>
+                            </td>
+
+                            <td class="text-center font-weight-bold">
+                                ${{ number_format($item->getSubtotal(), 2) }}
+                            </td>
+
+                            <td class="text-center">
+                                <form method="POST"
+                                      action="{{ route('cart.remove', $item) }}"
+                                      onsubmit="return confirm('Supprimer ce produit ?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</x-app-layout>
+
+    {{-- Summary --}}
+    <div class="col-lg-4">
+        <div class="card position-sticky" style="top:80px">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-receipt"></i> Résumé
+                </h3>
+            </div>
+
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Sous-total</span>
+                    <strong>${{ number_format($cart->getTotal(), 2) }}</strong>
+                </div>
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Livraison</span>
+                    <span class="text-success">Gratuite</span>
+                </div>
+
+                <hr>
+
+                <div class="d-flex justify-content-between mb-4">
+                    <h4>Total</h4>
+                    <h4>${{ number_format($cart->getTotal(), 2) }}</h4>
+                </div>
+
+                @auth
+                    @if(auth()->user()->role_id == 3)
+                        <a href="{{ route('checkout.index') }}"
+                           class="btn btn-success btn-block">
+                            <i class="fas fa-credit-card"></i> Passer la commande
+                        </a>
+                    @else
+                        <button class="btn btn-secondary btn-block" disabled>
+                            Seuls les clients peuvent commander
+                        </button>
+                    @endif
+                @else
+                    <a href="{{ route('login') }}"
+                       class="btn btn-primary btn-block">
+                        <i class="fas fa-sign-in-alt"></i> Se connecter
+                    </a>
+                @endauth
+
+                <form method="POST"
+                      action="{{ route('cart.clear') }}"
+                      class="mt-3"
+                      onsubmit="return confirm('Vider le panier ?')">
+                    @csrf
+                    @method('DELETE')
+
+                    <button class="btn btn-link text-danger btn-block">
+                        <i class="fas fa-trash"></i> Vider le panier
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+@endif
+@stop

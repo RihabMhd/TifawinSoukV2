@@ -1,79 +1,96 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Ajouter un fournisseur') }}
-        </h2>
-    </x-slot>
+@extends('adminlte::page')
 
-    <div class="py-12">
-        <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <form action="{{ route('admin.fournisseurs.store') }}" method="POST" class="space-y-6">
-                        @csrf
-                        
-                        <!-- Nom -->
-                        <div>
-                            <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Nom
-                            </label>
-                            <input type="text" 
-                                   name="name" 
-                                   id="name"
-                                   value="{{ old('name') }}"
-                                   required
-                                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
-                            @error('name')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
+@section('title', 'Ajouter un fournisseur')
 
-                        <!-- Email -->
-                        <div>
-                            <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Email
-                            </label>
-                            <input type="email" 
-                                   name="email" 
-                                   id="email"
-                                   value="{{ old('email') }}"
-                                   required
-                                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
-                            @error('email')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
+@section('content_header')
+<div class="d-flex justify-content-between align-items-center">
+    <h1>
+        <i class="fas fa-truck"></i> Ajouter un fournisseur
+    </h1>
 
-                        <!-- Téléphone -->
-                        <div>
-                            <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Téléphone
-                            </label>
-                            <input type="text" 
-                                   name="phone" 
-                                   id="phone"
-                                   value="{{ old('phone') }}"
-                                   required
-                                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
-                            @error('phone')
-                                <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
-                            @enderror
-                        </div>
+    <a href="{{ route('admin.fournisseurs.index') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Retour
+    </a>
+</div>
+@stop
 
-                        <!-- Buttons -->
-                        <div class="flex items-center justify-end space-x-3 pt-4">
-                            <a href="{{ route('admin.fournisseurs.index') }}"
-                               class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-25 transition ease-in-out duration-150">
-                                Annuler
-                            </a>
-                            <button type="submit"
-                                    class="inline-flex items-center px-4 py-2 bg-gray-800 dark:bg-gray-200 border border-transparent rounded-md font-semibold text-xs text-white dark:text-gray-800 uppercase tracking-widest hover:bg-gray-700 dark:hover:bg-white focus:bg-gray-700 dark:focus:bg-white active:bg-gray-900 dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                                Enregistrer
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+@section('content')
+
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <i class="fas fa-exclamation-triangle"></i>
+        <strong>Erreur :</strong> veuillez corriger les champs ci-dessous.
     </div>
-</x-app-layout>
+@endif
+
+<div class="card card-primary">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-user-plus"></i> Informations du fournisseur
+        </h3>
+    </div>
+
+    <form action="{{ route('admin.fournisseurs.store') }}" method="POST">
+        @csrf
+
+        <div class="card-body">
+
+            {{-- Nom --}}
+            <div class="form-group">
+                <label for="name">Nom <span class="text-danger">*</span></label>
+                <input type="text"
+                       name="name"
+                       id="name"
+                       value="{{ old('name') }}"
+                       class="form-control @error('name') is-invalid @enderror"
+                       required>
+
+                @error('name')
+                    <span class="invalid-feedback">{{ $message }}</span>
+                @enderror
+            </div>
+
+            {{-- Email --}}
+            <div class="form-group">
+                <label for="email">Email <span class="text-danger">*</span></label>
+                <input type="email"
+                       name="email"
+                       id="email"
+                       value="{{ old('email') }}"
+                       class="form-control @error('email') is-invalid @enderror"
+                       required>
+
+                @error('email')
+                    <span class="invalid-feedback">{{ $message }}</span>
+                @enderror
+            </div>
+
+            {{-- Téléphone --}}
+            <div class="form-group">
+                <label for="phone">Téléphone <span class="text-danger">*</span></label>
+                <input type="text"
+                       name="phone"
+                       id="phone"
+                       value="{{ old('phone') }}"
+                       class="form-control @error('phone') is-invalid @enderror"
+                       required>
+
+                @error('phone')
+                    <span class="invalid-feedback">{{ $message }}</span>
+                @enderror
+            </div>
+
+        </div>
+
+        <div class="card-footer d-flex justify-content-end">
+            <a href="{{ route('admin.fournisseurs.index') }}" class="btn btn-secondary mr-2">
+                Annuler
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Enregistrer
+            </button>
+        </div>
+    </form>
+</div>
+
+@stop
