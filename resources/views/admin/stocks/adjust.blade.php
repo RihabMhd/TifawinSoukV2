@@ -16,7 +16,7 @@
         @method('PATCH')
         <input type="number" name="quantity" id="quantity" value="{{ $product->quantity }}">
         <input type="number" name="stock_alert_threshold" id="tock_alert_threshol" value="{{ $product->stock_alert_threshold }}">
-        <button type="submit">update</button>
+        <button type="submit">Add quantity stock</button>
     </form>
 </body>
 </html>
