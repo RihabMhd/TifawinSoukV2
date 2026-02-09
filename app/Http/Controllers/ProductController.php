@@ -10,27 +10,28 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
+
     public function index(Request $request)
     {
         $categories = Category::withCount('products')->orderBy('title')->get();
-        
+
         $query = Product::with(['user', 'category', 'fournisseur']);
-      
+
         if ($request->has('category_id') && $request->category_id != '') {
             $query->where('category_id', $request->category_id);
         }
-        
+
         if ($request->has('search') && $request->search != '') {
             $query->where('title', 'like', '%' . $request->search . '%');
         }
-        
+
         $products = $query->latest()->paginate(12)->withQueryString();
-        
+
         // Check if admin - show table view, otherwise show card view
         if (auth()->check() && auth()->user()->isAdmin()) {
             return view('admin.products.index', compact('products', 'categories'));
         }
-        
+
         return view('products.index', compact('products', 'categories'));
     }
 
@@ -38,12 +39,12 @@ class ProductController extends Controller
     {
         $categories = Category::orderBy('title')->get();
         $fournisseurs = Fournisseur::orderBy('name')->get();
-        
+
         if ($categories->isEmpty()) {
             return redirect()->route('categories.create')
                 ->with('error', 'Please create a category first before adding products.');
         }
-        
+
         return view('admin.products.create', compact('categories', 'fournisseurs'));
     }
 
@@ -74,12 +75,12 @@ class ProductController extends Controller
     public function show(string $id)
     {
         $product = Product::with(['user', 'category', 'fournisseur'])->findOrFail($id);
-        
+
         $relatedProducts = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
             ->take(4)
             ->get();
-            
+
         return view('products.show', compact('product', 'relatedProducts'));
     }
 
@@ -123,7 +124,7 @@ class ProductController extends Controller
     public function destroy(string $id)
     {
         $product = Product::findOrFail($id);
-        
+
         if ($product->image) {
             Storage::disk('public')->delete($product->image);
         }

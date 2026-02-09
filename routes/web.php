@@ -28,8 +28,8 @@ Route::prefix('cart')->name('cart.')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->middleware('verified')->name('dashboard');
+        return view('user.dashboard');
+    })->middleware('verified')->name('user.dashboard');
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
@@ -80,6 +80,7 @@ Route::middleware(['auth', 'admin'])
     ->name('admin.')
     ->group(function () {
 
+        Route::get('/dashboard', [AdminOrderController::class, 'dashboard'])->name('dashboard');
 
 
         Route::get('/orders', [AdminOrderController::class, 'index'])
@@ -96,11 +97,8 @@ Route::middleware(['auth', 'admin'])
     });
 
 
-    // ================================== stocks ======================
+// ================================== stocks ======================
 
-    Route::get('/admin/stock/dashboard',[StockController::class,'dashboard'])->name('admin.stock.dashboard');
-    Route::get('/admin/stock/adjust/{id}',[StockController::class,'edit'])->name('admin.stock.edit');
-    Route::patch('/admin/stock/adjust/{product}',[StockController::class,'adjust'])->name('admin.stock.adjust');
-    Route::get('/dashboard', [AdminOrderController::class, 'dashboard'])->name('dashboard');
-
-
+Route::get('/admin/stock/dashboard', [StockController::class, 'dashboard'])->name('admin.stock.dashboard');
+Route::get('/admin/stock/adjust/{id}', [StockController::class, 'edit'])->name('admin.stock.edit');
+Route::patch('/admin/stock/adjust/{product}', [StockController::class, 'adjust'])->name('admin.stock.adjust');

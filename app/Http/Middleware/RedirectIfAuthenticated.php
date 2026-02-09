@@ -25,9 +25,12 @@ class RedirectIfAuthenticated
                 if (Auth::user()->isAdmin()) {
                     return redirect()->route('admin.dashboard');
                 }
-                
-                // Regular user goes to client dashboard
-                return redirect()->route('dashboard');
+
+                if (auth()->user()->isAdmin()) {
+                    return redirect()->intended(route('admin.dashboard'));
+                }
+
+                return redirect()->intended(route('user.dashboard'));
             }
         }
 
