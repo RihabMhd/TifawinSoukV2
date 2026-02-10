@@ -11,6 +11,9 @@ class StockController extends Controller
     {
         $product_rupture = Product::where('quantity', 0)->get();
         
+        $product_stock_critique = Product::whereColumn('quantity', '<=', 'stock_alert_threshold')
+            ->where('quantity', '>', 0)
+            ->get();
         
         $total_value = 0;
         foreach (Product::all() as $product) {
@@ -19,15 +22,36 @@ class StockController extends Controller
 
         return view('admin.stocks.dashboard', [
             'product_rupture' => $product_rupture,
+            'product_stock_critique' => $product_stock_critique,
             'product_valeur_inventaire' => $total_value
+        ]);
+    }
+
+    public function edit($id)
+    {
+        $product = Product::findOrFail($id);
+        
+        return view('admin.stocks.adjust', [
+            'product' => $product
         ]);
     }
 
     public function adjust(Request $request, $id)
     {
-        $product = Product::findOrFail($id);
-        $product->increment('quantity', $request->quantity);
+        $request->validate([
+            'quantity' => 'required|integer|min:0',
+            'stock_alert_threshold' => 'required|integer|min:0'
+        ]);
 
-        return redirect()->route('admin.stock.dashboard');
+        $product = Product::findOrFail($id);
+        
+        $product->update([
+            'quantity' => $request->quantity,
+            'stock_alert_threshold' => $request->stock_alert_threshold
+        ]);
+
+        return redirect()
+            ->route('admin.stock.dashboard')
+            ->with('success', 'Stock updated successfully for ' . $product->title);
     }
 }
