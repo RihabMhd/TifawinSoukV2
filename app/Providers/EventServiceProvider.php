@@ -19,10 +19,7 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-        // Événement de connexion → Fusionner le panier
-        Login::class => [
-            MergeCartOnLogin::class,
-        ],
+     
     ];
 
     /**

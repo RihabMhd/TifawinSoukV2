@@ -246,12 +246,12 @@
 
                        
                         <div class="space-y-3 mb-4 max-h-64 overflow-y-auto">
-                            @foreach($cart->items as $item)
+                            @foreach($cart->products as $product)
                             <div class="flex items-center gap-3 pb-3 border-b dark:border-gray-700">
-                                @if($item->product->image)
-                                <img src="{{ asset('storage/' . $item->product->image) }}"
+                                @if($product->image)
+                                <img src="{{ asset('storage/' . $product->image) }}"
                                      class="w-12 h-12 rounded object-cover"
-                                     alt="{{ $item->product->title ?? $item->product->name }}">
+                                     alt="{{ $product->title ?? $product->name }}">
                                 @else
                                 <div class="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center">
                                     <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -262,15 +262,15 @@
 
                                 <div class="flex-1 min-w-0">
                                     <p class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                                        {{ $item->product->title ?? $item->product->name }}
+                                        {{ $product->title ?? $product->name }}
                                     </p>
                                     <p class="text-xs text-gray-500 dark:text-gray-400">
-                                        Qté: {{ $item->quantity }} × ${{ number_format($item->price_at_addition, 2) }}
+                                        Qté: {{ $product->quantity }} × ${{ number_format($product->price_at_addition, 2) }}
                                     </p>
                                 </div>
 
                                 <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                                    ${{ number_format($item->getSubtotal(), 2) }}
+                                    ${{ number_format($product->getSubtotal(), 2) }}
                                 </div>
                             </div>
                             @endforeach

@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Order extends Model
 {
@@ -24,7 +26,6 @@ class Order extends Model
         'country',
         'payment_method',
         'payment_status',
-        'subtotal',
         'tax',
         'shipping',
         'total',
@@ -34,7 +35,6 @@ class Order extends Model
     ];
 
     protected $casts = [
-        'subtotal' => 'decimal:2',
         'tax' => 'decimal:2',
         'shipping' => 'decimal:2',
         'total' => 'decimal:2',
@@ -51,11 +51,6 @@ class Order extends Model
 
    
    
-    public function items()
-    {
-        return $this->hasMany(OrderItem::class);
-    }
-
    
     public function getStatusColorAttribute()
     {
@@ -95,5 +90,19 @@ class Order extends Model
     public function canBeCancelled(): bool
     {
         return in_array($this->status, ['pending', 'processing']);
+    }
+  
+   
+    public function products(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'order_product')
+            ->withPivot('quantity', 'price')
+            ->withTimestamps();
+    }
+
+   
+    public static function generateOrderNumber(): string
+    {
+        return 'ORD-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -6));
     }
 }
