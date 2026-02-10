@@ -17,12 +17,16 @@ require __DIR__ . '/auth.php';
 Route::get('/', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
 
-// Cart Routes
+
 Route::prefix('cart')->name('cart.')->group(function () {
     Route::get('/', [CartController::class, 'index'])->name('index');
     Route::post('/add/{id}', [CartController::class, 'add'])->name('add');
-    Route::patch('/update/{cartItem}', [CartController::class, 'update'])->name('update');
-    Route::delete('/remove/{cartItem}', [CartController::class, 'remove'])->name('remove');
+    
+    Route::patch('/update/{product}', [CartController::class, 'update'])->name('update');
+    
+    
+    Route::delete('/remove/{product}', [CartController::class, 'remove'])->name('remove');
+    
     Route::delete('/clear', [CartController::class, 'clear'])->name('clear');
 });
 
@@ -35,10 +39,6 @@ Route::middleware('auth')->group(function () {
     // Checkout Routes
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
-
-    // PayPal Specific Routes
-    Route::get('/paypal/success/{order}', [CheckoutController::class, 'paypalSuccess'])->name('paypal.success');
-    Route::get('/paypal/cancel/{order}', [CheckoutController::class, 'paypalCancel'])->name('paypal.cancel');
 
     // Order Routes
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
@@ -60,13 +60,13 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::put('/admin/orders/{id}', [OrderController::class, 'update'])->name('admin.orders.update');
     Route::get('/admin/orders', [OrderController::class, 'index'])->name('admin.orders.index');
 
-    // Products (Admin)
-    Route::get('/admin/products/{id}', [ProductController::class, 'show'])->name('admin.products.show');
+    // Products (Admin) - Order matters: specific routes before parameterized routes
     Route::get('/admin/products/create', [ProductController::class, 'create'])->name('admin.products.create');
     Route::post('/admin/products', [ProductController::class, 'store'])->name('admin.products.store');
     Route::get('/admin/products/{id}/edit', [ProductController::class, 'edit'])->name('admin.products.edit');
     Route::put('/admin/products/{id}', [ProductController::class, 'update'])->name('admin.products.update');
     Route::delete('/admin/products/{id}', [ProductController::class, 'destroy'])->name('admin.products.destroy');
+    Route::get('/admin/products/{id}', [ProductController::class, 'show'])->name('admin.products.show');
 
     // Fournisseurs (Suppliers)
     Route::get('/admin/fournisseurs/create', [FournisseurController::class, 'create'])->name('admin.fournisseurs.create');

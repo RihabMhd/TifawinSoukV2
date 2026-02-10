@@ -56,18 +56,18 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @forelse($order->items as $item)
+                        @forelse($order->products as $product)
                             <tr>
                                 <td>
-                                    <strong>{{ $item->product->title ?? 'Produit supprimé' }}</strong>
-                                    @if($item->product && $item->product->sku)
-                                        <br><small class="text-muted">SKU: {{ $item->product->sku }}</small>
+                                    <strong>{{ $product->title ?? 'Produit supprimé' }}</strong>
+                                    @if($product->sku)
+                                        <br><small class="text-muted">SKU: {{ $product->sku }}</small>
                                     @endif
                                 </td>
-                                <td>{{ number_format($item->price,2) }} MAD</td>
-                                <td>{{ $item->quantity }}</td>
+                                <td>{{ number_format($product->pivot->price, 2) }} MAD</td>
+                                <td>{{ $product->pivot->quantity }}</td>
                                 <td class="text-right font-weight-bold">
-                                    {{ number_format($item->price * $item->quantity,2) }} MAD
+                                    {{ number_format($product->pivot->price * $product->pivot->quantity, 2) }} MAD
                                 </td>
                             </tr>
                         @empty
@@ -86,27 +86,27 @@
                 <div class="float-right" style="width:300px">
                     <p class="d-flex justify-content-between">
                         <span>Sous-total</span>
-                        <span>{{ number_format($order->total,2) }} MAD</span>
+                        <span>{{ number_format($order->subtotal ?? $order->total, 2) }} MAD</span>
                     </p>
 
-                    @if($order->shipping_cost > 0)
+                    @if(isset($order->shipping_cost) && $order->shipping_cost > 0)
                         <p class="d-flex justify-content-between">
                             <span>Livraison</span>
-                            <span>{{ number_format($order->shipping_cost,2) }} MAD</span>
+                            <span>{{ number_format($order->shipping_cost, 2) }} MAD</span>
                         </p>
                     @endif
 
-                    @if($order->tax > 0)
+                    @if(isset($order->tax) && $order->tax > 0)
                         <p class="d-flex justify-content-between">
                             <span>TVA</span>
-                            <span>{{ number_format($order->tax,2) }} MAD</span>
+                            <span>{{ number_format($order->tax, 2) }} MAD</span>
                         </p>
                     @endif
 
                     <hr>
                     <h4 class="d-flex justify-content-between">
                         <span>Total</span>
-                        <strong>{{ number_format($order->total,2) }} MAD</strong>
+                        <strong>{{ number_format($order->total, 2) }} MAD</strong>
                     </h4>
                 </div>
             </div>
@@ -139,6 +139,9 @@
             <div class="card-body">
                 <p>{{ $order->first_name ?? '' }} {{ $order->last_name ?? '' }}</p>
                 <p>{{ $order->shipping_address ?? $order->address }}</p>
+                @if($order->address_complement)
+                    <p>{{ $order->address_complement }}</p>
+                @endif
                 <p>{{ $order->postal_code }} {{ $order->city }}</p>
                 <p>{{ $order->country }}</p>
             </div>
@@ -175,9 +178,10 @@
 
                     <span class="badge badge-{{ 
                         $order->status=='pending'?'warning':
+                        ($order->status=='confirmed'?'info':
                         ($order->status=='processing'?'info':
                         ($order->status=='shipped'?'primary':
-                        ($order->status=='delivered'?'success':'danger'))) 
+                        ($order->status=='delivered'?'success':'danger')))) 
                     }} p-2 w-100 text-center">
                         {{ ucfirst($order->status) }}
                     </span>
@@ -218,7 +222,7 @@
                 <p class="mt-3">
                     <strong>Total:</strong><br>
                     <span class="h4 text-primary">
-                        {{ number_format($order->total,2) }} MAD
+                        {{ number_format($order->total, 2) }} MAD
                     </span>
                 </p>
             </div>

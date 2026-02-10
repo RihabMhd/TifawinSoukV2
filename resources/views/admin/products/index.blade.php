@@ -134,11 +134,7 @@
         </table>
     </div>
 
-    @if($products->hasPages())
-    <div class="card-footer">
-        {{ $products->links() }}
-    </div>
-    @endif
+   
 </div>
 
 @else

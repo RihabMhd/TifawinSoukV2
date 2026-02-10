@@ -7,23 +7,19 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-  
     public function index(Request $request)
     {
         $query = auth()->user()->orders()
-            ->with('items.product');
+            ->with('products');
 
-        // search by order number
         if ($request->filled('search')) {
             $query->where('order_number', 'LIKE', '%' . $request->search . '%');
         }
 
-        // filter by status
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        // filter by date range
         if ($request->filled('date_from')) {
             $query->whereDate('created_at', '>=', $request->date_from);
         }
@@ -31,7 +27,6 @@ class OrderController extends Controller
             $query->whereDate('created_at', '<=', $request->date_to);
         }
 
-        // filter by price range
         if ($request->filled('price_min')) {
             $query->where('total', '>=', $request->price_min);
         }
@@ -39,11 +34,9 @@ class OrderController extends Controller
             $query->where('total', '<=', $request->price_max);
         }
 
-        // custom sorting
         $sortBy = $request->get('sort_by', 'created_at');
         $sortOrder = $request->get('sort_order', 'desc');
 
-        // validate sort fields to prevent sql injection
         $allowedSortFields = ['created_at', 'total', 'order_number', 'status'];
         if (in_array($sortBy, $allowedSortFields)) {
             $query->orderBy($sortBy, $sortOrder);
@@ -53,10 +46,8 @@ class OrderController extends Controller
 
         $orders = $query->paginate(10)->withQueryString();
 
-        // get active filters for display
         $activeFilters = $this->getActiveFilters($request);
 
-        // get available statuses for filter dropdown
         $statuses = [
             'pending' => 'En attente',
             'processing' => 'En traitement',
@@ -68,39 +59,32 @@ class OrderController extends Controller
         return view('orders.index', compact('orders', 'activeFilters', 'statuses'));
     }
 
-   
     public function show(Order $order)
     {
-        //  the user can view his own orders
         if ($order->user_id !== auth()->id()) {
             abort(403, 'Vous n\'êtes pas autorisé à voir cette commande.');
         }
 
-     
-        $order->load('items.product');
+        $order->load('products');
 
         return view('orders.show', compact('order'));
     }
 
-    
     public function cancel(Order $order)
     {
         if ($order->user_id !== auth()->id()) {
             abort(403, 'Vous n\'êtes pas autorisé à annuler cette commande.');
         }
 
-        // check if order can be cancelled
         if (!$order->canBeCancelled()) {
             return redirect()->back()
                 ->with('error', 'Cette commande ne peut plus être annulée. Seules les commandes en attente ou en traitement peuvent être annulées.');
         }
 
         try {
-            // restore product quantities
-            foreach ($order->items as $item) {
-                if ($item->product) {
-                    $item->product->increment('quantity', $item->quantity);
-                }
+            foreach ($order->products as $product) {
+                $quantity = $product->pivot->quantity;
+                $product->increment('quantity', $quantity);
             }
 
             $order->update([
@@ -109,7 +93,6 @@ class OrderController extends Controller
 
             return redirect()->route('orders.index')
                 ->with('success', 'Votre commande a été annulée avec succès. Les quantités ont été remises en stock.');
-
         } catch (\Exception $e) {
             return redirect()->back()
                 ->with('error', 'Une erreur est survenue lors de l\'annulation de la commande. Veuillez réessayer.');

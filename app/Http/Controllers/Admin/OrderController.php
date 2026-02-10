@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -13,7 +12,8 @@ class OrderController extends Controller
 
     public function index(Request $request)
     {
-        $query = Order::with(['user', 'items']);
+        // Changed from 'items' to 'products' to use pivot table
+        $query = Order::with(['user', 'products']);
 
         // Status filter
         if ($request->filled('status')) {
@@ -83,10 +83,12 @@ class OrderController extends Controller
             ->whereYear('created_at', now()->year)
             ->count();
 
-        $topProducts = OrderItem::join('products', 'order_items.product_id', '=', 'products.id')
+      
+        $topProducts = DB::table('order_product')
+            ->join('products', 'order_product.product_id', '=', 'products.id')
             ->select(
                 'products.title as product_name',
-                DB::raw('SUM(order_items.quantity) as total_sold')
+                DB::raw('SUM(order_product.quantity) as total_sold')
             )
             ->groupBy('products.id', 'products.title')
             ->orderByDesc('total_sold')
@@ -131,15 +133,17 @@ class OrderController extends Controller
     //Show order
     public function show($id)
     {
-        $order = Order::with(['items.product', 'user'])->findOrFail($id);
+        // Changed from 'items.product' to just 'products' since we're using pivot table
+        $order = Order::with(['products', 'user'])->findOrFail($id);
         return view('admin.orders.show', compact('order'));
     }
 
     //Update order
     public function updateStatus(Request $request, $id)
     {
+        // Added 'confirmed' status to validation
         $request->validate([
-            'status' => 'required|in:pending,processing,shipped,delivered,cancelled'
+            'status' => 'required|in:pending,confirmed,processing,shipped,delivered,cancelled'
         ]);
 
         $order = Order::findOrFail($id);
@@ -155,6 +159,16 @@ class OrderController extends Controller
 
         if ($order->status === 'delivered') {
             return back()->with('error', 'Impossible d\'annuler une commande livrée');
+        }
+
+        // Restore product quantities when canceling
+        // Load products with pivot data
+        $order->load('products');
+        
+        foreach ($order->products as $product) {
+            // Access quantity from pivot table
+            $quantity = $product->pivot->quantity;
+            $product->increment('quantity', $quantity);
         }
 
         $order->update(['status' => 'cancelled']);

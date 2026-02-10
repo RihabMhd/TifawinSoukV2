@@ -11,21 +11,10 @@ use Illuminate\Support\Facades\Storage;
 class ProductController extends Controller
 {
 
-    public function index(Request $request)
+    public function index()
     {
-        $categories = Category::withCount('products')->orderBy('title')->get();
-
-        $query = Product::with(['user', 'category', 'fournisseur']);
-
-        if ($request->has('category_id') && $request->category_id != '') {
-            $query->where('category_id', $request->category_id);
-        }
-
-        if ($request->has('search') && $request->search != '') {
-            $query->where('title', 'like', '%' . $request->search . '%');
-        }
-
-        $products = $query->latest()->paginate(12)->withQueryString();
+        $products = Product::all();
+        $categories = Category::all();
 
         if (auth()->check() && auth()->user()->isAdmin()) {
             return view('admin.products.index', compact('products', 'categories'));

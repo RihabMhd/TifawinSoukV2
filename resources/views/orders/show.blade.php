@@ -263,18 +263,18 @@
                             </h3>
 
                             <div class="space-y-4">
-                                @foreach ($order->items as $item)
+                                @foreach ($order->products as $product)
                                     <div
                                         class="flex items-start gap-4 pb-4 border-b dark:border-gray-700 last:border-0">
                                       
-                                        @if ($item->product_snapshot && isset($item->product_snapshot['image']))
-                                            <img src="{{ asset('storage/' . $item->product_snapshot['image']) }}"
+                                        @if ($product->product_snapshot && isset($product->product_snapshot['image']))
+                                            <img src="{{ asset('storage/' . $product->product_snapshot['image']) }}"
                                                 class="w-20 h-20 rounded object-cover flex-shrink-0"
-                                                alt="{{ $item->product_snapshot['name'] ?? 'Product' }}">
-                                        @elseif($item->product && $item->product->image)
-                                            <img src="{{ asset('storage/' . $item->product->image) }}"
+                                                alt="{{ $product->product_snapshot['name'] ?? 'Product' }}">
+                                        @elseif($product->product && $product->product->image)
+                                            <img src="{{ asset('storage/' . $product->product->image) }}"
                                                 class="w-20 h-20 rounded object-cover flex-shrink-0"
-                                                alt="{{ $item->product->title ?? $item->product->name }}">
+                                                alt="{{ $product->product->title ?? $product->product->name }}">
                                         @else
                                             <div
                                                 class="w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded flex items-center justify-center flex-shrink-0">
@@ -290,27 +290,27 @@
 
                                         <div class="flex-1 min-w-0">
                                             <h5 class="font-medium text-gray-900 dark:text-gray-100">
-                                                {{ $item->product_snapshot['name'] ?? ($item->product->title ?? ($item->product->name ?? 'Produit indisponible')) }}
+                                                {{ $product->product_snapshot['name'] ?? ($product->title ?? ($item->product->name ?? 'Produit indisponible')) }}
                                             </h5>
 
-                                            @if (isset($item->product_snapshot['reference']) || ($item->product && $item->product->reference))
+                                            @if (isset($product->product_snapshot['reference']) || ($product && $product->reference))
                                                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                                                     Réf:
-                                                    {{ $item->product_snapshot['reference'] ?? $item->product->reference }}
+                                                    {{ $product->product_snapshot['reference'] ?? $product->reference }}
                                                 </p>
                                             @endif
 
                                             <div
                                                 class="flex items-center gap-4 mt-2 text-sm text-gray-600 dark:text-gray-400">
-                                                <span>Quantité: {{ $item->quantity }}</span>
+                                                <span>Quantité: {{ $product->quantity }}</span>
                                                 <span>×</span>
-                                                <span>${{ number_format($item->price, 2) }}</span>
+                                                <span>${{ number_format($product->price, 2) }}</span>
                                             </div>
                                         </div>
 
                                         <div
                                             class="font-semibold text-gray-900 dark:text-gray-100 text-right flex-shrink-0">
-                                            ${{ number_format($item->subtotal, 2) }}
+                                            ${{ number_format($product->subtotal, 2) }}
                                         </div>
                                     </div>
                                 @endforeach
