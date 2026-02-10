@@ -86,7 +86,7 @@
                         <label>Statut</label>
                         <select name="status" class="form-control">
                             <option value="">Tous</option>
-                            @foreach(['pending','processing','shipped','delivered','cancelled'] as $s)
+                            @foreach(['pending','confirmed','processing','shipped','delivered','cancelled'] as $s)
                                 <option value="{{ $s }}" {{ request('status')==$s?'selected':'' }}>
                                     {{ ucfirst($s) }}
                                 </option>
@@ -171,13 +171,14 @@
                                 <select name="status"
                                         class="form-control form-control-sm
                                         {{ $order->status=='pending'?'bg-warning':'' }}
+                                        {{ $order->status=='confirmed'?'bg-info':'' }}
                                         {{ $order->status=='processing'?'bg-info':'' }}
                                         {{ $order->status=='shipped'?'bg-primary':'' }}
                                         {{ $order->status=='delivered'?'bg-success':'' }}
                                         {{ $order->status=='cancelled'?'bg-danger':'' }}"
                                         onchange="if(confirm('Changer le statut ?')) this.form.submit(); else this.value='{{ $order->status }}'">
 
-                                    @foreach(['pending','processing','shipped','delivered','cancelled'] as $s)
+                                    @foreach(['pending','confirmed','processing','shipped','delivered','cancelled'] as $s)
                                         <option value="{{ $s }}" {{ $order->status==$s?'selected':'' }}>
                                             {{ ucfirst($s) }}
                                         </option>

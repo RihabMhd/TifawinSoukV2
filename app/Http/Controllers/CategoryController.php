@@ -12,7 +12,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::with('user')->withCount('products')->latest()->get();
+        $categories = Category::all(); 
         return view('categories.index', compact('categories'));
     }
 
