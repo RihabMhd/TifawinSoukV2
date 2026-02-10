@@ -40,10 +40,6 @@ class FournisseurController extends Controller
         return redirect()->route('admin.fournisseurs.index')->with('success', 'Fournisseur created successfully!');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id) {}
 
     /**
      * Show the form for editing the specified resource.
@@ -79,7 +75,7 @@ class FournisseurController extends Controller
     }
     public function trash(string $id){
         $fournisseur = Fournisseur::findOrFail($id);
-        $fournisseur->delete();        
+        $fournisseur->delete();     
         return redirect()->route('admin.fournisseurs.index');
     }
     public function restore(string $id){

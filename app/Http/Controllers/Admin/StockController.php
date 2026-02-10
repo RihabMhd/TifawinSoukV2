@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Termwind\Components\Raw;
 
 
-class   StockController extends Controller
+class StockController extends Controller
 {
     public function dashboard(){
         $product_rupture = Product::where('quantity',0)->get();
