@@ -42,49 +42,9 @@ class Order extends Model
         'delivered_at' => 'datetime',
     ];
 
-
-
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-   
-   
-   
-    public function getStatusColorAttribute()
-    {
-        return match ($this->status) {
-            'pending' => 'yellow',
-            'processing' => 'blue',
-            'shipped' => 'purple',
-            'delivered' => 'green',
-            'cancelled' => 'red',
-            default => 'gray',
-        };
-    }
-
- 
-    public function getStatusLabelAttribute()
-    {
-        return match ($this->status) {
-            'pending' => 'En attente',
-            'processing' => 'En traitement',
-            'shipped' => 'Expédiée',
-            'delivered' => 'Livrée',
-            'cancelled' => 'Annulée',
-            default => 'Inconnu',
-        };
-    }
-
-    public function getPaymentMethodLabelAttribute()
-    {
-        return match ($this->payment_method) {
-            'credit_card' => 'Carte bancaire',
-            'paypal' => 'PayPal',
-            'cash_on_delivery' => 'Paiement à la livraison',
-            default => 'Autre',
-        };
     }
 
     public function canBeCancelled(): bool
@@ -100,9 +60,4 @@ class Order extends Model
             ->withTimestamps();
     }
 
-   
-    public static function generateOrderNumber(): string
-    {
-        return 'ORD-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -6));
-    }
 }

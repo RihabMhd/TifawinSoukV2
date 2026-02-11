@@ -61,16 +61,6 @@ class Product extends Model
     }
 
 
-    public function isLowStock(): bool
-    {
-        return $this->quantity <= $this->stock_alert_threshold;
-    }
-
-
-    public function isOutOfStock(): bool
-    {
-        return $this->quantity <= 0;
-    }
     
     public function getSubtotal(): float
     {
