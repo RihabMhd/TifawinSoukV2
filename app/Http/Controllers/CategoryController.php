@@ -7,33 +7,27 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
+        // get all categories from database
         $categories = Category::all(); 
         return view('admin.categories.index', compact('categories'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('admin.categories.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
+        // check if data is valid
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
         ]);
 
+        // add user id of who created category
         $validated['user_id'] = auth()->id();
 
         Category::create($validated);
@@ -42,56 +36,51 @@ class CategoryController extends Controller
             ->with('success', 'Category created successfully!');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
+        // get category with user and products (and user who created each product)
         $category = Category::with(['user', 'products.user'])->findOrFail($id);
-
         return view('admin.categories.show', compact('category'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
+        // find category or show 404 if not exist
         $category = Category::findOrFail($id);
-
         return view('admin.categories.edit', compact('category'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
+        // find category or 404
         $category = Category::findOrFail($id);
 
+        // check if new data is valid
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
         ]);
 
+        // update category with new data
         $category->update($validated);
 
         return redirect()->route('admin.categories.index')
             ->with('success', 'Category updated successfully!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
+        // find category or 404
         $category = Category::findOrFail($id);
 
+        // check if category have products
         if ($category->products()->count() > 0) {
+            // if yes, cannot delete, show error
             return redirect()->route('admin.categories.index')
                 ->with('error', 'Cannot delete category with existing products. Please delete or reassign the products first.');
         }
 
+        // if no products  delete category
         $category->delete();
 
         return redirect()->route('admin.categories.index')
