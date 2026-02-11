@@ -34,6 +34,7 @@ class Order extends Model
         'delivered_at',
     ];
 
+    // automatically convert database column values to specific PHP data types
     protected $casts = [
         'tax' => 'decimal:2',
         'shipping' => 'decimal:2',
