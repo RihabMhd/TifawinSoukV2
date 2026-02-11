@@ -21,8 +21,6 @@ return new class extends Migration
                 ->cascadeOnDelete();
             $table->integer('quantity')->default(1);
             $table->timestamps();
-            
-            // Ensure one product appears only once per cart
             $table->unique(['cart_id', 'product_id']);
         });
     }
