@@ -1,14 +1,14 @@
 @extends('adminlte::page')
 
-@section('title', 'Edit Category')
+@section('title', 'Create Category')
 
 @section('content_header')
 <div class="d-flex justify-content-between align-items-center">
     <h1>
-        <i class="fas fa-edit"></i> Edit Category
+        <i class="fas fa-plus-circle"></i> Create New Category
     </h1>
 
-    <a href="{{ route('categories.index') }}" class="btn btn-secondary">
+    <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary">
         <i class="fas fa-arrow-left"></i> Back
     </a>
 </div>
@@ -22,13 +22,12 @@
         <div class="card card-outline card-primary">
             <div class="card-header">
                 <h3 class="card-title">
-                    <i class="fas fa-tag"></i> Category Details
+                    <i class="fas fa-tag"></i> Category Information
                 </h3>
             </div>
 
-            <form action="{{ route('categories.update', $category->id) }}" method="POST">
+            <form action="{{ route('admin.categories.store') }}" method="POST">
                 @csrf
-                @method('PUT')
 
                 <div class="card-body">
 
@@ -40,8 +39,9 @@
                         <input type="text"
                                id="title"
                                name="title"
-                               value="{{ old('title', $category->title) }}"
+                               value="{{ old('title') }}"
                                class="form-control @error('title') is-invalid @enderror"
+                               placeholder="Enter category title"
                                required>
 
                         @error('title')
@@ -56,7 +56,7 @@
                                   name="description"
                                   rows="4"
                                   class="form-control @error('description') is-invalid @enderror"
-                                  placeholder="Optional description">{{ old('description', $category->description) }}</textarea>
+                                  placeholder="Optional description">{{ old('description') }}</textarea>
 
                         @error('description')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -66,12 +66,12 @@
                 </div>
 
                 <div class="card-footer d-flex justify-content-between">
-                    <a href="{{ route('categories.index') }}" class="btn btn-outline-secondary">
+                    <a href="{{ route('admin.categories.index') }}" class="btn btn-outline-secondary">
                         <i class="fas fa-times"></i> Cancel
                     </a>
 
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Update Category
+                        <i class="fas fa-save"></i> Create Category
                     </button>
                 </div>
 

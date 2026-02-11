@@ -68,7 +68,7 @@
 
                     @auth
                         @if (auth()->user()->isAdmin())
-                            <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
+                            <x-nav-link :href="route('admin.categories.index')" :active="request()->routeIs('categories.*')">
                                 {{ __('Categories') }}
                             </x-nav-link>
 
@@ -200,7 +200,7 @@
 
             @auth
                 @if (auth()->user()->isAdmin())
-                    <x-responsive-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
+                    <x-responsive-nav-link :href="route('admin.categories.index')" :active="request()->routeIs('categories.*')">
                         {{ __('Categories') }}
                     </x-responsive-nav-link>
                     <x-responsive-nav-link :href="route('admin.fournisseurs.index')" :active="request()->routeIs('admin.fournisseurs.*')">

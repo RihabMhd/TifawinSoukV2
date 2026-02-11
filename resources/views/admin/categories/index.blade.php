@@ -5,7 +5,7 @@
 @section('content_header')
 <div class="d-flex justify-content-between align-items-center">
     <h1><i class="fas fa-tags"></i> Categories</h1>
-    <a href="{{ route('categories.create') }}" class="btn btn-primary">
+    <a href="{{ route('admin.categories.create') }}" class="btn btn-primary">
         <i class="fas fa-plus"></i> Add Category
     </a>
 </div>
@@ -71,17 +71,17 @@
                     </td>
 
                     <td class="text-right">
-                        <a href="{{ route('categories.show', $category->id) }}"
+                        <a href="{{ route('admin.categories.show', $category->id) }}"
                            class="btn btn-sm btn-outline-primary">
                             <i class="fas fa-eye"></i>
                         </a>
 
-                        <a href="{{ route('categories.edit', $category->id) }}"
+                        <a href="{{ route('admin.categories.edit', $category->id) }}"
                            class="btn btn-sm btn-outline-secondary">
                             <i class="fas fa-edit"></i>
                         </a>
 
-                        <form action="{{ route('categories.destroy', $category->id) }}"
+                        <form action="{{ route('admin.categories.destroy', $category->id) }}"
                               method="POST"
                               class="d-inline"
                               onsubmit="return confirm('Are you sure you want to delete this category?')">
@@ -107,7 +107,7 @@
         <i class="fas fa-tags fa-3x text-muted mb-3"></i>
         <h5>No categories</h5>
         <p class="text-muted">Get started by creating a new category.</p>
-        <a href="{{ route('categories.create') }}" class="btn btn-primary">
+        <a href="{{ route('admin.categories.create') }}" class="btn btn-primary">
             <i class="fas fa-plus"></i> Add Category
         </a>
     </div>

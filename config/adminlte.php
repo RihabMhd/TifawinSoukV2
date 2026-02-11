@@ -336,7 +336,7 @@ return [
 
     [
         'text' => 'Catégories',
-        'route' => 'categories.index',
+        'route' => 'admin.categories.index',
         'icon' => 'fas fa-tags',
     ],
 

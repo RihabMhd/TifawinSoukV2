@@ -9,7 +9,8 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\admin\StockController;
-use App\Http\Controllers\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Admin\AdminOrderController;
+use App\Http\Controllers\Admin\DashboardController;
 
 require __DIR__ . '/auth.php';
 
@@ -17,16 +18,12 @@ require __DIR__ . '/auth.php';
 Route::get('/', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
 
-
+// Cart Routes
 Route::prefix('cart')->name('cart.')->group(function () {
     Route::get('/', [CartController::class, 'index'])->name('index');
     Route::post('/add/{id}', [CartController::class, 'add'])->name('add');
-    
     Route::patch('/update/{product}', [CartController::class, 'update'])->name('update');
-    
-    
     Route::delete('/remove/{product}', [CartController::class, 'remove'])->name('remove');
-    
     Route::delete('/clear', [CartController::class, 'clear'])->name('clear');
 });
 
@@ -52,49 +49,52 @@ Route::middleware('auth')->group(function () {
 });
 
 // Admin Routes
-Route::middleware(['auth', 'admin'])->group(function () {
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+
+    // Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Order Management
+    Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
+    Route::put('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
+    Route::delete('/orders/{order}', [AdminOrderController::class, 'cancel'])->name('orders.cancel');
+
     // Categories
-    Route::resource('categories', CategoryController::class);
+    // Categories - in admin group (around line 71)
+    Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+    Route::get('/categories/create', [CategoryController::class, 'create'])->name('categories.create');
+    Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
+    Route::get('/categories/{id}', [CategoryController::class, 'show'])->name('categories.show'); 
+    Route::get('/categories/{id}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
+    Route::put('/categories/{id}', [CategoryController::class, 'update'])->name('categories.update');
+    Route::delete('/categories/{id}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 
-    // Orders (Admin)
-    Route::put('/admin/orders/{id}', [OrderController::class, 'update'])->name('admin.orders.update');
-    Route::get('/admin/orders', [OrderController::class, 'index'])->name('admin.orders.index');
-
-    // Products (Admin) - Order matters: specific routes before parameterized routes
-    Route::get('/admin/products/create', [ProductController::class, 'create'])->name('admin.products.create');
-    Route::post('/admin/products', [ProductController::class, 'store'])->name('admin.products.store');
-    Route::get('/admin/products/{id}/edit', [ProductController::class, 'edit'])->name('admin.products.edit');
-    Route::put('/admin/products/{id}', [ProductController::class, 'update'])->name('admin.products.update');
-    Route::delete('/admin/products/{id}', [ProductController::class, 'destroy'])->name('admin.products.destroy');
-    Route::get('/admin/products/{id}', [ProductController::class, 'show'])->name('admin.products.show');
+    // Products - Specific routes before parameterized routes
+    Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
+    Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+    Route::get('/products/{id}/edit', [ProductController::class, 'edit'])->name('products.edit');
+    Route::put('/products/{id}', [ProductController::class, 'update'])->name('products.update');
+    Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
+    Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
 
     // Fournisseurs (Suppliers)
-    Route::get('/admin/fournisseurs/create', [FournisseurController::class, 'create'])->name('admin.fournisseurs.create');
-    Route::get('/admin/fournisseurs/archive', [FournisseurController::class, 'archive'])->name('admin.fournisseurs.archive');
-    Route::post('/admin/fournisseurs', [FournisseurController::class, 'store'])->name('admin.fournisseurs.store');
-    Route::get('/admin/fournisseurs/edit/{id}', [FournisseurController::class, 'edit'])->name('admin.fournisseurs.edit');
-    Route::put('/admin/fournisseurs/{id}/update', [FournisseurController::class, 'update'])->name('admin.fournisseurs.update');
-    Route::get('/admin/fournisseurs', [FournisseurController::class, 'index'])->name('admin.fournisseurs.index');
-    Route::delete('/admin/fournisseurs/{id}', [FournisseurController::class, 'destroy'])->name('admin.fournisseurs.destroy');
-    Route::delete('/admin/fournisseurs/{id}/trash', [FournisseurController::class, 'trash'])->name('admin.fournisseurs.trash');
-    Route::post('/admin/fournisseurs/{id}/restore', [FournisseurController::class, 'restore'])->name('admin.fournisseurs.restore');
-});
-
-// Admin Dashboard & Orders Management
-Route::middleware(['auth', 'admin'])
-    ->prefix('admin')
-    ->name('admin.')
-    ->group(function () {
-        Route::get('/dashboard', [AdminOrderController::class, 'dashboard'])->name('dashboard');
-        Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
-        Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
-        Route::put('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
-        Route::delete('/orders/{order}', [AdminOrderController::class, 'cancel'])->name('orders.cancel');
+    Route::prefix('fournisseurs')->name('fournisseurs.')->group(function () {
+        Route::get('/', [FournisseurController::class, 'index'])->name('index');
+        Route::get('/create', [FournisseurController::class, 'create'])->name('create');
+        Route::post('/', [FournisseurController::class, 'store'])->name('store');
+        Route::get('/archive', [FournisseurController::class, 'archive'])->name('archive');
+        Route::get('/edit/{id}', [FournisseurController::class, 'edit'])->name('edit');
+        Route::put('/{id}/update', [FournisseurController::class, 'update'])->name('update');
+        Route::delete('/{id}', [FournisseurController::class, 'destroy'])->name('destroy');
+        Route::delete('/{id}/trash', [FournisseurController::class, 'trash'])->name('trash');
+        Route::post('/{id}/restore', [FournisseurController::class, 'restore'])->name('restore');
     });
 
-// Stock Management Routes
-Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/admin/stock/dashboard', [StockController::class, 'dashboard'])->name('admin.stock.dashboard');
-    Route::get('/admin/stock/adjust/{id}', [StockController::class, 'edit'])->name('admin.stock.edit');
-    Route::patch('/admin/stock/adjust/{product}', [StockController::class, 'adjust'])->name('admin.stock.adjust');
+    // Stock Management
+    Route::prefix('stock')->name('stock.')->group(function () {
+        Route::get('/dashboard', [StockController::class, 'dashboard'])->name('dashboard');
+        Route::get('/adjust/{id}', [StockController::class, 'edit'])->name('edit');
+        Route::patch('/adjust/{product}', [StockController::class, 'adjust'])->name('adjust');
+    });
 });

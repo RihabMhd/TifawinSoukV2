@@ -9,11 +9,11 @@
     </h1>
 
     <div>
-        <a href="{{ route('categories.edit', $category->id) }}" class="btn btn-warning">
+        <a href="{{ route('admin.categories.edit', $category->id) }}" class="btn btn-warning">
             <i class="fas fa-edit"></i> Edit
         </a>
 
-        <a href="{{ route('categories.index') }}" class="btn btn-secondary ml-2">
+        <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary ml-2">
             <i class="fas fa-arrow-left"></i> Back
         </a>
     </div>

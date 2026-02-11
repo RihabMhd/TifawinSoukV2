@@ -29,7 +29,7 @@ class ProductController extends Controller
         $fournisseurs = Fournisseur::orderBy('name')->get();
 
         if ($categories->isEmpty()) {
-            return redirect()->route('categories.create')
+            return redirect()->route('admin.categories.create')
                 ->with('error', 'Please create a category first before adding products.');
         }
 
