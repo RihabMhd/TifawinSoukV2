@@ -10,7 +10,7 @@ class CategoryController extends Controller
     public function index()
     {
         // get all categories from database
-        $categories = Category::all(); 
+        $categories = Category::all();
         return view('admin.categories.index', compact('categories'));
     }
 
@@ -38,24 +38,24 @@ class CategoryController extends Controller
 
     public function show(string $id)
     {
-        // get category with user and products (and user who created each product)
+        // get category with user and products 
         $category = Category::with(['user', 'products.user'])->findOrFail($id);
         return view('admin.categories.show', compact('category'));
     }
 
     public function edit(string $id)
     {
-        // find category or show 404 if not exist
+        // find category
         $category = Category::findOrFail($id);
         return view('admin.categories.edit', compact('category'));
     }
 
     public function update(Request $request, string $id)
     {
-        // find category or 404
+        // find category
         $category = Category::findOrFail($id);
 
-        // check if new data is valid
+        // check valid new data
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
@@ -65,19 +65,19 @@ class CategoryController extends Controller
         $category->update($validated);
 
         return redirect()->route('admin.categories.index')
-            ->with('success', 'Category updated successfully!');
+            ->with('success', 'Category updated successfully');
     }
 
     public function destroy(string $id)
     {
-        // find category or 404
+        // find category
         $category = Category::findOrFail($id);
 
         // check if category have products
         if ($category->products()->count() > 0) {
-            // if yes, cannot delete, show error
+
             return redirect()->route('admin.categories.index')
-                ->with('error', 'Cannot delete category with existing products. Please delete or reassign the products first.');
+                ->with('error', 'Cannot delete category with existing products.');
         }
 
         // if no products  delete category
