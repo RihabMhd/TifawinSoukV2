@@ -71,15 +71,19 @@
                                     <div class="mb-6">
                                         @if ($product->quantity > 0)
                                             <div class="flex items-center text-green-600 dark:text-green-400">
-                                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M5 13l4 4L19 7" />
                                                 </svg>
                                                 <span class="font-medium">{{ $product->quantity }} en stock</span>
                                             </div>
                                         @else
                                             <div class="flex items-center text-red-600 dark:text-red-400">
-                                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                                 </svg>
                                                 <span class="font-medium">Rupture de stock</span>
                                             </div>
@@ -90,13 +94,15 @@
                                 <div class="border-t border-gray-200 dark:border-gray-700 pt-6 mt-6">
                                     <dl class="grid grid-cols-1 gap-4">
                                         <div>
-                                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Created by</dt>
+                                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Created by
+                                            </dt>
                                             <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">
                                                 {{ $product->user->name }}
                                             </dd>
                                         </div>
                                         <div>
-                                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Listed on</dt>
+                                            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Listed on
+                                            </dt>
                                             <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">
                                                 {{ $product->created_at->format('F j, Y') }}
                                             </dd>
@@ -104,7 +110,8 @@
                                         @auth
                                             @if (auth()->user()->isAdmin())
                                                 <div>
-                                                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Stock Quantity</dt>
+                                                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Stock
+                                                        Quantity</dt>
                                                     <dd class="mt-1 text-sm text-gray-900 dark:text-gray-100">
                                                         {{ $product->quantity }} units
                                                     </dd>
@@ -118,38 +125,47 @@
                             {{-- Action Buttons --}}
                             <div class="mt-8 space-y-4">
                                 {{-- Add to Cart (Only for non-admin users) --}}
-                                @if (!auth()->check() || !auth()->user()->isAdmin())
-                                    <form action="{{ route('cart.add', $product->id) }}" method="POST">
-                                        @csrf
-                                        @if ($product->quantity > 0)
-                                            <div class="flex items-center gap-3">
-                                                <div class="flex flex-col">
-                                                    <label class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                                        Quantité
-                                                    </label>
-                                                    <input type="number" name="quantity" value="1" min="1" max="{{ $product->quantity }}"
-                                                        class="w-24 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
-                                                </div>
+                                @auth
+                                    @if (!auth()->user()->isAdmin())
+                                        <form action="{{ route('cart.add', $product->id) }}" method="POST">
+                                            @csrf
+                                            @if ($product->quantity > 0)
+                                                <div class="flex items-center gap-3">
+                                                    <div class="flex flex-col">
+                                                        <label
+                                                            class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                            Quantité
+                                                        </label>
+                                                        <input type="number" name="quantity" value="1" min="1"
+                                                            max="{{ $product->quantity }}"
+                                                            class="w-24 rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 shadow-sm focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600">
+                                                    </div>
 
-                                                <button type="submit"
-                                                    class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold text-sm rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mt-6">
-                                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                                    <button type="submit"
+                                                        class="flex-1 inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold text-sm rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mt-6">
+                                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor"
+                                                            viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                                stroke-width="2"
+                                                                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                                                        </svg>
+                                                        Ajouter au panier
+                                                    </button>
+                                                </div>
+                                            @else
+                                                <button type="button" disabled
+                                                    class="w-full inline-flex items-center justify-center px-6 py-3 bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 font-semibold rounded-lg cursor-not-allowed">
+                                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                                     </svg>
-                                                    Ajouter au panier
+                                                    Rupture de stock
                                                 </button>
-                                            </div>
-                                        @else
-                                            <button type="button" disabled
-                                                class="w-full inline-flex items-center justify-center px-6 py-3 bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 font-semibold rounded-lg cursor-not-allowed">
-                                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                                </svg>
-                                                Rupture de stock
-                                            </button>
-                                        @endif
-                                    </form>
-                                @endif
+                                            @endif
+                                        </form>
+                                    @endif
+                                @endauth
 
                                 {{-- Navigation and Admin Actions --}}
                                 <div class="flex gap-3">
@@ -160,7 +176,8 @@
 
                                     @auth
                                         @if (auth()->user()->isAdmin())
-                                            <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST"
+                                            <form action="{{ route('admin.products.destroy', $product->id) }}"
+                                                method="POST"
                                                 onsubmit="return confirm('Are you sure you want to delete this product?');"
                                                 class="flex-1">
                                                 @csrf

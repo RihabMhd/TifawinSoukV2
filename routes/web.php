@@ -18,20 +18,22 @@ require __DIR__ . '/auth.php';
 Route::get('/', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
 
-// Cart Routes
-Route::prefix('cart')->name('cart.')->group(function () {
-    Route::get('/', [CartController::class, 'index'])->name('index');
-    Route::post('/add/{id}', [CartController::class, 'add'])->name('add');
-    Route::patch('/update/{product}', [CartController::class, 'update'])->name('update');
-    Route::delete('/remove/{product}', [CartController::class, 'remove'])->name('remove');
-    Route::delete('/clear', [CartController::class, 'clear'])->name('clear');
-});
 
 // Authenticated User Routes
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
         return view('user.dashboard');
     })->middleware('verified')->name('user.dashboard');
+
+    // Cart Routes
+    Route::prefix('cart')->name('cart.')->group(function () {
+        Route::get('/', [CartController::class, 'index'])->name('index');
+        Route::post('/add/{id}', [CartController::class, 'add'])->name('add');
+        Route::patch('/update/{product}', [CartController::class, 'update'])->name('update');
+        Route::delete('/remove/{product}', [CartController::class, 'remove'])->name('remove');
+        Route::delete('/clear', [CartController::class, 'clear'])->name('clear');
+    });
+
 
     // Checkout Routes
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
@@ -64,7 +66,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
     Route::get('/categories/create', [CategoryController::class, 'create'])->name('categories.create');
     Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
-    Route::get('/categories/{id}', [CategoryController::class, 'show'])->name('categories.show'); 
+    Route::get('/categories/{id}', [CategoryController::class, 'show'])->name('categories.show');
     Route::get('/categories/{id}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
     Route::put('/categories/{id}', [CategoryController::class, 'update'])->name('categories.update');
     Route::delete('/categories/{id}', [CategoryController::class, 'destroy'])->name('categories.destroy');
