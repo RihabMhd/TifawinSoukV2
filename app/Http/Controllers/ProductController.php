@@ -135,12 +135,12 @@ class ProductController extends Controller
         $product->update($validated);
 
         return redirect()->route('products.index')
-            ->with('success', 'Product updated successfully!');
+            ->with('success', 'Produict successfully updated ');
     }
 
     public function destroy(string $id)
     {
-        
+
         $product = Product::findOrFail($id);
 
         // if product have image, delete it from storage
@@ -152,6 +152,6 @@ class ProductController extends Controller
         $product->delete();
 
         return redirect()->route('products.index')
-            ->with('success', 'Product deleted successfully!');
+            ->with('success', 'Product deleted avec succes');
     }
 }
