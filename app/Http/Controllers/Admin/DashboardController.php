@@ -10,18 +10,18 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // boxes at the top
+        // stats
         $revenueToday = Order::whereDate('created_at', today())->sum('total');
         $ordersToday = Order::whereDate('created_at', today())->count();
         $pendingOrders = Order::where('status', 'pending')->count();
         $ordersThisMonth = Order::whereMonth('created_at', now()->month)->count();
 
-        // Chart: sales for the last 7 days
+        // 7 days sales
         $salesData = Order::select(DB::raw('DATE(created_at) as date'), DB::raw('SUM(total) as total'))
             ->whereDate('created_at', '>=', now()->subDays(6))
             ->groupBy('date')->get();
 
-        // Chart: orders by Status
+        // orders by Status
         $statusStats = Order::select('status', DB::raw('count(*) as count'))
             ->groupBy('status')->get();
 
@@ -34,11 +34,11 @@ class DashboardController extends Controller
             'pendingOrders' => $pendingOrders,
             'ordersThisMonth' => $ordersThisMonth,
             'recentOrders' => $recentOrders,
-            'chartLabels' => $salesData->pluck('date'), // turns a list of rows into a list of just dates
+            'chartLabels' => $salesData->pluck('date'),
             'chartData' => $salesData->pluck('total'),
             'statusLabels' => $statusStats->pluck('status'),
             'statusData' => $statusStats->pluck('count'),
-            'topProducts' => collect() // placeholder until you have your product logic ready
+            'topProducts' => collect() 
         ]);
     }
 }

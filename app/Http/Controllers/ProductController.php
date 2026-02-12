@@ -12,29 +12,28 @@ class ProductController extends Controller
 {
     public function index()
     {
-        // get all products and categories
         $products = Product::all();
         $categories = Category::all();
 
-        // if user is admin, show admin view
+
         if (auth()->check() && auth()->user()->isAdmin()) {
             return view('admin.products.index', compact('products', 'categories'));
         }
 
-        // if normal user, show normal view
+
         return view('products.index', compact('products', 'categories'));
     }
 
     public function create()
     {
-        // get categories and suppliers sorted by name
+
         $categories = Category::orderBy('title')->get();
         $fournisseurs = Fournisseur::orderBy('name')->get();
 
-        // if no categories exist, redirect to create category first
+
         if ($categories->isEmpty()) {
             return redirect()->route('admin.categories.create')
-                ->with('error', 'Please create a category first before adding products.');
+                ->with('error', 'Please create a category first before add products.');
         }
 
         return view('admin.products.create', compact('categories', 'fournisseurs'));
@@ -42,7 +41,7 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        // check if all data is valid
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:2000',
@@ -56,47 +55,47 @@ class ProductController extends Controller
 
         // if user upload image
         if ($request->hasFile('image')) {
-            // save image in storage/app/public/products folder
+
             $imagePath = $request->file('image')->store('products', 'public');
-            // add image path to validated data
+
             $validated['image'] = $imagePath;
         }
 
         // add user id of who created product
         $validated['user_id'] = auth()->id();
 
-        // create product in database
+
         Product::create($validated);
 
         return redirect()->route('products.index')
-            ->with('success', 'Product created successfully!');
+            ->with('success', 'Product successfully created');
     }
 
     public function show(string $id)
     {
-        // get product with user, category and supplier relations
+
         $product = Product::with(['user', 'category', 'fournisseur'])->findOrFail($id);
 
-        // get 4 similar products from same category (but not this product)
+        // similaire product samee category
         $relatedProducts = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
             ->take(4)
             ->get();
 
-        // if admin, show admin view
+
         if (auth()->check() && auth()->user()->isAdmin()) {
             return view('admin.products.show', compact('product', 'relatedProducts'));
         }
 
-        // if normal user, show normal view
+
         return view('products.show', compact('product', 'relatedProducts'));
     }
 
     public function edit(string $id)
     {
-        // find product
+
         $product = Product::findOrFail($id);
-        // get all categories and suppliers
+
         $categories = Category::orderBy('title')->get();
         $fournisseurs = Fournisseur::orderBy('name')->get();
 
@@ -105,10 +104,10 @@ class ProductController extends Controller
 
     public function update(Request $request, string $id)
     {
-        // find product or 404
+
         $product = Product::findOrFail($id);
 
-        // check if new data is valid
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string|max:2000',
@@ -120,9 +119,9 @@ class ProductController extends Controller
             'fournisseur_id' => 'nullable|exists:fournisseurs,id'
         ]);
 
-        // if user upload new image
+
         if ($request->hasFile('image')) {
-            // delete old image if exist
+
             if ($product->image) {
                 Storage::disk('public')->delete($product->image);
             }
@@ -132,16 +131,16 @@ class ProductController extends Controller
             $validated['image'] = $imagePath;
         }
 
-        // update product with ew data
+
         $product->update($validated);
 
         return redirect()->route('products.index')
-            ->with('success', 'Product updated successfully!');
+            ->with('success', 'Produict successfully updated ');
     }
 
     public function destroy(string $id)
     {
-        // find product or 404
+
         $product = Product::findOrFail($id);
 
         // if product have image, delete it from storage
@@ -149,10 +148,10 @@ class ProductController extends Controller
             Storage::disk('public')->delete($product->image);
         }
 
-        // delete product from database
+
         $product->delete();
 
         return redirect()->route('products.index')
-            ->with('success', 'Product deleted successfully!');
+            ->with('success', 'Product deleted avec succes');
     }
 }
