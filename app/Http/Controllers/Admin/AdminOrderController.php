@@ -39,7 +39,7 @@ class AdminOrderController extends Controller
 
     public function show($id)
     {
-        
+
         $order = Order::with(['products', 'user'])->findOrFail($id);
         return view('admin.orders.show', compact('order'));
     }
@@ -50,6 +50,6 @@ class AdminOrderController extends Controller
         $order = Order::findOrFail($id);
         $order->update(['status' => $request->status]);
 
-        return back()->with('success', 'Statut mis à jour !');
+        return back()->with('success', 'Statut updated success');
     }
 }

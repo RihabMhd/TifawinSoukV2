@@ -33,7 +33,7 @@ class CategoryController extends Controller
         Category::create($validated);
 
         return redirect()->route('admin.categories.index')
-            ->with('success', 'Category created successfully!');
+            ->with('success', 'Category created with succes');
     }
 
     public function show(string $id)
@@ -65,7 +65,7 @@ class CategoryController extends Controller
         $category->update($validated);
 
         return redirect()->route('admin.categories.index')
-            ->with('success', 'Category updated successfully');
+            ->with('success', 'Category updated with  succes');
     }
 
     public function destroy(string $id)
@@ -73,17 +73,17 @@ class CategoryController extends Controller
 
         $category = Category::findOrFail($id);
 
-        
+
         if ($category->products()->count() > 0) {
 
             return redirect()->route('admin.categories.index')
-                ->with('error', 'Cannot delete category with existing products.');
+                ->with('error', 'Cant delete category with existing products.');
         }
 
 
         $category->delete();
 
         return redirect()->route('admin.categories.index')
-            ->with('success', 'Category deleted successfully!');
+            ->with('success', 'Category deleted with success');
     }
 }
