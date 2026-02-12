@@ -33,7 +33,7 @@ class ProductController extends Controller
 
         if ($categories->isEmpty()) {
             return redirect()->route('admin.categories.create')
-                ->with('error', 'Please create a category first before adding products.');
+                ->with('error', 'Please create a category first before add products.');
         }
 
         return view('admin.products.create', compact('categories', 'fournisseurs'));
@@ -68,7 +68,7 @@ class ProductController extends Controller
         Product::create($validated);
 
         return redirect()->route('products.index')
-            ->with('success', 'Product created successfully!');
+            ->with('success', 'Product successfully created');
     }
 
     public function show(string $id)
